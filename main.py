@@ -246,7 +246,7 @@ def menuProyectoCorrigeProceso(proyecto,proyectoSinExt):
         screen.paper(1000,400,3,2)
         screen.textAlone(700,1100,f"Elige el ID del proceso a corregir:")                                         
         screen.updateScreen()
-        id_seleccionado = screen.AnswerChain([1350,1100,500,60],4)        
+        id_seleccionado = screen.AnswerChain([1450,1100,500,40],4)        
 
         conexion,cursor = sql.creaAbreBd(carpeta)                                                   
         
@@ -335,7 +335,7 @@ def menuProyectoCorrigeExcepciones(proyecto,proyectoSinExt):
         screen.paper(1000,400,3,2)
         screen.textAlone(700,1100,f"Elige el ID de la excepción a corregir:")                                         
         screen.updateScreen()
-        id_seleccionado = screen.AnswerChain([1350,1100,500,60],4)
+        id_seleccionado = screen.AnswerChain([1450,1100,500,40],4)
         
         conexion,cursor = sql.creaAbreBd(carpeta)                                                   
         try:
@@ -402,9 +402,12 @@ def menuProyectoAnade(proyecto,proyectoSinExt):
     
     in_function = True
     while in_function:
+        
         screen.paper(250,500,8)
         screen.text(350,700,[f"Añade a '{proyectoSinExt}'",
                     "1 - Datos proceso","2 - Excepciones"])
+        
+        screen.updateScreen()
         
         destino = screen.pushAndCome()
         if destino == "1":      menuProyectoAnadeProceso(proyecto,proyectoSinExt)
@@ -464,14 +467,15 @@ def menuProyectoAnadeProceso(proyecto,proyectoSinExt):
         if respuesta.upper() == "N":
             
             in_function = False  
-              
+            mensajeConPausa("Proceso(s) añadido(s) con éxito")
+                  
     return                                          
 
 def cuestionarioProcesos(errores):
     
-    fecha =     screen.AnswerChain([2000,343,500,60], errores[0])
-    paginas =   screen.AnswerChain([2000,402,500,60], errores[1])
-    tipo =      screen.AnswerChain([2000,461,500,60], errores[2])
+    fecha =     screen.AnswerChain([2000,343,500,40], errores[0])
+    paginas =   screen.AnswerChain([2000,402,500,40], errores[1])
+    tipo =      screen.AnswerChain([2000,461,500,40], errores[2])
     
     return fecha,paginas,tipo
 
@@ -520,13 +524,14 @@ def menuProyectoAnadeExcepcion(proyecto,proyectoSinExt):
         respuesta = screen.pushAndCome()
         if respuesta.upper() == "N":
             
+            mensajeConPausa("Excepción(es) añadida(s) con éxito")
             in_function = False  
              
     return                                             
 
 def cuestionarioExcepciones():
     
-    fecha = screen.AnswerChain([2000,343,500,60],13)
+    fecha = screen.AnswerChain([2000,343,500,40],13)
     
     return fecha
 
@@ -714,6 +719,7 @@ def menuProyectoElimina(proyecto,proyectoSinExt):
         
         destino = screen.pushAndCome()
         
+        resultado = False
         in_function = False
         if destino == "1":      resultado = menuProyectoEliminaProyecto(proyecto,proyectoSinExt)
         elif destino == "2":    menuProyectoEliminaProceso(proyecto,proyectoSinExt)
@@ -769,7 +775,7 @@ def menuProyectoEliminaProceso(proyecto,proyectoSinExt):
         screen.textAlone(700,1100,f"Elige el ID del proceso a borrar:")                                         
         screen.updateScreen()
         
-        id_seleccionado = screen.AnswerChain([1350,1100,500,60],4)
+        id_seleccionado = screen.AnswerChain([1450,1100,500,40],4)
         screen.textAlone(700,1159,f"¿Quieres eliminar el proceso {id_seleccionado}? (S/N): ")                                         
         screen.updateScreen()
         
@@ -832,7 +838,7 @@ def menuProyectoEliminaExcepcion(proyecto,proyectoSinExt):
         screen.textAlone(700,1100,f"Elige el ID de la excepción a borrar:")                                         
         screen.updateScreen()
         
-        id_seleccionado = screen.AnswerChain([1350,1100,500,60],4)
+        id_seleccionado = screen.AnswerChain([1450,1100,500,40],4)
         screen.textAlone(700,1159,f"¿Quieres eliminar la excepción {id_seleccionado}? (S/N): ")                                         
         screen.updateScreen()
         
@@ -917,7 +923,7 @@ def menuCreaProyecto():
         posicion += 59
         
     screen.updateScreen()
-    nombre = screen.AnswerChain([1900,346,500,90],9)
+    nombre = screen.AnswerChain([2000,346,600,40],9)
 
     codigos_de_error = [3,4,1,2,4,5,4,6,4,4,7,4,8,0]
     datos_necesarios = ["",""]
@@ -968,35 +974,37 @@ def menuCreaProyecto():
               'tanto':tanto_ciento_correc, 'notas':notas}                                     
     sql.anadeFila(cursor, insertamos, estos_datos, BdProyecto)                                          
     sql.CierraBd(BdProyecto) 
+    
+    mensajeConPausa("Proyecto creado con éxito")
                                                                                    
     return    
 
 def cuestionarioProyecto(errores,datos_necesarios):   
                                       
     tabla_usar,unidad_calculo,caracteres_holandesa,coste_holandesa,palabra_origen_destino,euros_pagina, = "", "","","","",""
-    estado = screen.AnswerChain([1900,464,500,90],errores[0])
+    estado = screen.AnswerChain([2000,464,600,40],errores[0])
     listado,carpeta = preparaListaClientes()                                            
     listaClientes(listado)                                            
-    cliente = screen.AnswerChain([1900,523,500,90],errores[1])
-    inicio_proyecto = screen.AnswerChain([1900,582,500,90],errores[2])   
-    fecha_entrega = screen.AnswerChain([1900,641,500,90],errores[3])
-    paginas_origen = screen.AnswerChain([1900,700,500,90],errores[4])
-    tipo_trabajo = screen.AnswerChain([1900,759,500,90],errores[5])
+    cliente = screen.AnswerChain([2000,523,600,40],errores[1])
+    inicio_proyecto = screen.AnswerChain([2000,582,600,40],errores[2])   
+    fecha_entrega = screen.AnswerChain([2000,641,600,40],errores[3])
+    paginas_origen = screen.AnswerChain([2000,700,600,40],errores[4])
+    tipo_trabajo = screen.AnswerChain([2000,759,600,40],errores[5])
     if tipo_trabajo == "C" or tipo_trabajo == "" and datos_necesarios[0] == "C":
         listado,carpeta = preparaListaTablas()
         listaTablas(listado)
-        tabla_usar = screen.AnswerChain([1900,818,500,90],errores[6]) 
+        tabla_usar = screen.AnswerChain([2000,818,600,40],errores[6]) 
     elif tipo_trabajo == "T" or tipo_trabajo == "" and datos_necesarios[0] == "T":
-        unidad_calculo = screen.AnswerChain([1900,877,500,90],errores[7]) 
+        unidad_calculo = screen.AnswerChain([2000,877,600,40],errores[7]) 
         if unidad_calculo == "C" or unidad_calculo == "" and datos_necesarios[1] == "C":
-            caracteres_holandesa = screen.AnswerChain([1900,936,500,90],errores[8]) 
-            coste_holandesa = screen.AnswerChain([1900,995,500,90],errores[9])
+            caracteres_holandesa = screen.AnswerChain([2000,936,600,40],errores[8]) 
+            coste_holandesa = screen.AnswerChain([2000,995,600,40],errores[9])
         elif unidad_calculo == "P" or unidad_calculo == "" and datos_necesarios[1] == "P":
-            palabra_origen_destino = screen.AnswerChain([1900,1054,500,90],errores[10]) 
+            palabra_origen_destino = screen.AnswerChain([2000,1054,600,40],errores[10]) 
         else:
-            euros_pagina = screen.AnswerChain([1900,1113,500,90],errores[11]) 
-    tanto_ciento_correc = screen.AnswerChain([1900,1172,500,90],errores[12])
-    notas = screen.AnswerChain([1900,1231,500,90],errores[13])    
+            euros_pagina = screen.AnswerChain([2000,1113,600,40],errores[11]) 
+    tanto_ciento_correc = screen.AnswerChain([2000,1172,600,40],errores[12])
+    notas = screen.AnswerChain([2000,1231,600,40],errores[13])    
       
     return estado,cliente,inicio_proyecto,fecha_entrega,paginas_origen,tipo_trabajo,tabla_usar,unidad_calculo,caracteres_holandesa,coste_holandesa,palabra_origen_destino,euros_pagina,tanto_ciento_correc,notas
             
@@ -1043,7 +1051,7 @@ def creaCliente():
                 posicion += 59
                 
             screen.updateScreen()
-            nombre = screen.AnswerChain([1900,346,500,90],9)
+            nombre = screen.AnswerChain([2000,346,600,40],9)
             telefono,direccion,nif,contacto,telefono_contacto,email_contacto,pago_previo = cuestionarioClientes()
 
             screen.textAlone(1505,877,"¿Son correctos los datos (S/N)?")
@@ -1070,19 +1078,20 @@ def creaCliente():
         respuesta = screen.pushAndCome()
         if respuesta.upper() == "N":
             
+            mensajeConPausa("Cliente(s) creado(s) con éxito")
             in_function = False
             
     return                                              
  
 def cuestionarioClientes(): 
                                                   
-    telefono = screen.AnswerChain([1900,464,500,90],4)
-    direccion = screen.AnswerChain([1900,523,500,90])
-    nif = screen.AnswerChain([1900,582,500,90])
-    contacto = screen.AnswerChain([1900,641,500,90])
-    telefono_contacto = screen.AnswerChain([1900,700,500,90],4)
-    email_contacto = screen.AnswerChain([1900,759,500,90])
-    pago_previo = screen.AnswerChain([1900,818,500,90],4)
+    telefono = screen.AnswerChain([2000,464,600,40],4)
+    direccion = screen.AnswerChain([2000,523,600,40])
+    nif = screen.AnswerChain([2000,582,600,40])
+    contacto = screen.AnswerChain([2000,641,600,40])
+    telefono_contacto = screen.AnswerChain([2000,700,600,40],4)
+    email_contacto = screen.AnswerChain([2000,759,600,40])
+    pago_previo = screen.AnswerChain([2000,818,600,40],4)
     
     return telefono,direccion,nif,contacto,telefono_contacto,email_contacto,pago_previo
     
@@ -1188,7 +1197,7 @@ def modificaCliente():
         screen.paper(1000,400,3,2)
         screen.textAlone(700,1100,f"Elige el ID del cliente a modificar:")
         screen.updateScreen()
-        id_seleccionado = screen.AnswerChain([1350,1100,500,60],4)
+        id_seleccionado = screen.AnswerChain([1450,1100,500,40],4)
         
         if id_seleccionado == "0":
         
@@ -1270,7 +1279,7 @@ def eliminaCliente():
         screen.paper(1000,600,3,2)
         screen.textAlone(900,1100,f"Elige el ID del cliente a borrar:")                                         
         screen.updateScreen()
-        id_seleccionado = screen.AnswerChain([1550,1100,500,60],4)
+        id_seleccionado = screen.AnswerChain([1650,1100,500,40],4)
         
         screen.textAlone(900,1159,f"¿Quieres eliminar el cliente {id_seleccionado}? (S/N): ")                                         
         screen.updateScreen()
@@ -1365,7 +1374,7 @@ def creaTabla():
             screen.updateScreen()
             if nombre == "":
                 
-                nombre = screen.AnswerChain([1900,346,500,90],9)
+                nombre = screen.AnswerChain([2000,346,600,40],9)
                 crea_tabla = f'''
                    CREATE TABLE IF NOT EXISTS {nombre}(
                        ID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -1405,15 +1414,16 @@ def creaTabla():
         respuesta = screen.pushAndCome()
         if respuesta == "N" or respuesta == "n":
             
+            mensajeConPausa("Tabla creada con éxito")
             in_function = False
   
     return                 
 
 def cuestionarioTabla():
     
-    de = screen.AnswerChain([1900,405,500,90],4)
-    a = screen.AnswerChain([1900,464,500,90],4)
-    euros = screen.AnswerChain([1900,523,500,90],11)
+    de = screen.AnswerChain([2000,405,600,40],4)
+    a = screen.AnswerChain([2000,464,600,40],4)
+    euros = screen.AnswerChain([2000,523,600,40],11)
     
     return de,a,euros
    
@@ -1518,7 +1528,7 @@ def modificaTabla():
         screen.paper(1000,400,3,2)
         screen.textAlone(700,1100,f"Elige el ID de la linea a modificar:")
         screen.updateScreen()
-        id_seleccionado = screen.AnswerChain([1350,1100,500,60],4)
+        id_seleccionado = screen.AnswerChain([1450,1100,500,40],4)
         
         if id_seleccionado == "0":
             
@@ -1617,7 +1627,7 @@ def eliminaTabla():
         screen.paper(1000,600,3,2)
         screen.textAlone(900,1100,f"Elige el ID de la tabla a borrar:")                                         
         screen.updateScreen()
-        id_seleccionado = screen.AnswerChain([1550,1100,500,60],4)
+        id_seleccionado = screen.AnswerChain([1650,1100,500,40],4)
         
         screen.textAlone(900,1159,f"¿Quieres eliminar la tabla {id_seleccionado}? (S/N): ")                                         
         screen.updateScreen()

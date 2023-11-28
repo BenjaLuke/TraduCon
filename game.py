@@ -18,7 +18,7 @@ class Game:
         
         self.height = (self.width*1440)/3440
         
-        self.screen = pygame.display.set_mode((self.width, self.height), pygame.FULLSCREEN)
+        self.screen = pygame.display.set_mode((self.width, self.height),)# pygame.FULLSCREEN)
 
         
         pygame.display.set_caption("Tradcon")
@@ -43,9 +43,9 @@ class Game:
         self.paper_mid_big = pygame.transform.scale(self.paper_mid, (int((self.width*800)/3440), int((self.height*71)/1440)))
         self.paper_down_big = pygame.transform.scale(self.paper_down, (int((self.width*800)/3440), int((self.height*145)/1440)))
         
-        self.paper_sup_super_big = pygame.transform.scale(self.paper_sup, (int((self.width*1200)/3440), int((self.height*116)/1440)))
-        self.paper_mid_super_big = pygame.transform.scale(self.paper_mid, (int((self.width*1200)/3440), int((self.height*71)/1440)))
-        self.paper_down_super_big = pygame.transform.scale(self.paper_down, (int((self.width*1200)/3440), int((self.height*145)/1440)))
+        self.paper_sup_super_big = pygame.transform.scale(self.paper_sup, (int((self.width*1500)/3440), int((self.height*116)/1440)))
+        self.paper_mid_super_big = pygame.transform.scale(self.paper_mid, (int((self.width*1500)/3440), int((self.height*71)/1440)))
+        self.paper_down_super_big = pygame.transform.scale(self.paper_down, (int((self.width*1500)/3440), int((self.height*145)/1440)))
         
         self.paper_graph = pygame.image.load("EXTRAS/hoja_de_grafica.png") 
         self.paper_graph = pygame.transform.scale(self.paper_graph, (int((self.width*1331)/3440), int((self.height*1400)/1440)))  
@@ -56,9 +56,9 @@ class Game:
         self.logoBig = pygame.transform.scale(self.logoBig, ((self.width*669)/3440, (self.height*609)/1440))
 
         
-        self.font_1 = pygame.font.Font("EXTRAS/BeautifulPeoplePersonalUse-dE0g.ttf", int((self.width*30)/3440), bold=True)
-        self.font_2 = pygame.font.Font("EXTRAS/JMH Typewriter-Bold.ttf", int((self.width*30)/3440), bold=True)
-        self.font_3 = pygame.font.Font("EXTRAS/JMH Typewriter-Bold.ttf", int((self.width*40)/3440), bold=True)
+        self.font_1 = pygame.font.Font("EXTRAS/BeautifulPeoplePersonalUse-dE0g.ttf", int((self.width*30)/3440))
+        self.font_2 = pygame.font.Font("EXTRAS/JMH Typewriter-Bold.ttf", int((self.width*30)/3440))
+        self.font_3 = pygame.font.Font("EXTRAS/JMH Typewriter-Bold.ttf", int((self.width*40)/3440))
         
         
         self.pass_page = pygame.mixer.Sound("EXTRAS/pasa hoja.wav")
@@ -132,7 +132,7 @@ class Game:
 
     def paperGraph(self,proyectoSinExt,Datos,Procesos,Excepciones):
         
-        self.screen.blit(self.paper_graph, ( self.width-int((self.width*1400)/3440), self.height-(int((self.height*1200)/1440)) ) )
+        self.screen.blit(self.paper_graph, ( self.width-int((self.width*1400)/3440), self.height-(int((self.height*1250)/1440)) ) )
         
         
         listaDeDatos = self.calculaDatosGrafica(proyectoSinExt,Datos,Procesos,Excepciones)
@@ -327,87 +327,87 @@ class Game:
         todasLasFechas = "Inicio: "+FechaInicioProyecto+" - Hoy: "+ FechaActual +" - Entrega: "+FechaEntrega
         
         
-        listaDeDatos.append([tituloLargo,1200,1000,self.font_2])
-        listaDeDatos.append([todasLasFechas,1200,925,self.font_2])
-        listaDeDatos.append(["      Páginas",1200,850,self.font_2])
-        listaDeDatos.append(["Totales:",1200,775,self.font_2])
-        listaDeDatos.append([str(NumeroPaginasOriginales),990,775,self.font_2])
+        listaDeDatos.append([tituloLargo,1200,1050,self.font_2])
+        listaDeDatos.append([todasLasFechas,1200,975,self.font_2])
+        listaDeDatos.append(["      Páginas",1200,900,self.font_2])
+        listaDeDatos.append(["Totales:",1200,825,self.font_2])
+        listaDeDatos.append([str(NumeroPaginasOriginales),990,825,self.font_2])
         if Datos[0][7] == "T":
-            listaDeDatos.append(["Traducidas: ",1200,675,self.font_2])
+            listaDeDatos.append(["Traducidas: ",1200,725,self.font_2])
         else:
-            listaDeDatos.append(["Corregidas: ",1200,675,self.font_2])
-        listaDeDatos.append([str(NumeroPaginasTraducidas),990,675,self.font_2])
+            listaDeDatos.append(["Corregidas: ",1200,725,self.font_2])
+        listaDeDatos.append([str(NumeroPaginasTraducidas),990,725,self.font_2])
         if Datos[0][7] == "T":
-            listaDeDatos.append(["Por trad.: ",1200,625,self.font_2])
+            listaDeDatos.append(["Por trad.: ",1200,675,self.font_2])
         else:
-            listaDeDatos.append(["Por corr.: ",1200,625,self.font_2])
-        listaDeDatos.append([str(NumeroPaginasPendientes),990,625,self.font_2])
-        listaDeDatos.append(["Revisadas: ",1200,525,self.font_2])
-        listaDeDatos.append([str(NumeroPaginasRevisadas),990,525,self.font_2])
-        listaDeDatos.append(["Por revisar: ",1200,475,self.font_2])
-        listaDeDatos.append([str(NumeroPaginasPorRevisar),990,475,self.font_2])
+            listaDeDatos.append(["Por corr.: ",1200,675,self.font_2])
+        listaDeDatos.append([str(NumeroPaginasPendientes),990,675,self.font_2])
+        listaDeDatos.append(["Revisadas: ",1200,575,self.font_2])
+        listaDeDatos.append([str(NumeroPaginasRevisadas),990,575,self.font_2])
+        listaDeDatos.append(["Por revisar: ",1200,525,self.font_2])
+        listaDeDatos.append([str(NumeroPaginasPorRevisar),990,525,self.font_2])
         
-        listaDeDatos.append(["          Días",900,850,self.font_2])
-        listaDeDatos.append(["Totales: ",900,775,self.font_2])
-        listaDeDatos.append([str(DiasPosibles),585,775,self.font_2])
-        listaDeDatos.append(["Pasados: ",900,725,self.font_2])
-        listaDeDatos.append([str(DiasYaPasados),585,725,self.font_2])
-        listaDeDatos.append(["Restantes: ",900,675,self.font_2])
-        listaDeDatos.append([str(DiasRestantes),585,675,self.font_2])
-        listaDeDatos.append(["Exentos: ",900,625,self.font_2])
-        listaDeDatos.append([str(DiasExentos),585,625,self.font_2])
-        listaDeDatos.append(["Reales: ",900,575,self.font_2])
-        listaDeDatos.append([str(DiasReales),585,575,self.font_2])
+        listaDeDatos.append(["          Días",900,900,self.font_2])
+        listaDeDatos.append(["Totales: ",900,825,self.font_2])
+        listaDeDatos.append([str(DiasPosibles),585,825,self.font_2])
+        listaDeDatos.append(["Pasados: ",900,775,self.font_2])
+        listaDeDatos.append([str(DiasYaPasados),585,775,self.font_2])
+        listaDeDatos.append(["Restantes: ",900,725,self.font_2])
+        listaDeDatos.append([str(DiasRestantes),585,725,self.font_2])
+        listaDeDatos.append(["Exentos: ",900,675,self.font_2])
+        listaDeDatos.append([str(DiasExentos),585,675,self.font_2])
+        listaDeDatos.append(["Reales: ",900,625,self.font_2])
+        listaDeDatos.append([str(DiasReales),585,625,self.font_2])
         if Datos[0][7] == "T":
-            listaDeDatos.append(["Dedicar a Trad.:",900,525,self.font_2])
+            listaDeDatos.append(["Dedicar a Trad.:",900,575,self.font_2])
         else:
-            listaDeDatos.append(["Dedicar a Corr.:",900,525,self.font_2])
-        listaDeDatos.append([str(DiasADedicarTrad),585,525,self.font_2])
-        listaDeDatos.append(["Dedicar a Rev.n:",900,475,self.font_2])
-        listaDeDatos.append([str(DiasADedicarRev),585,475,self.font_2])
-        listaDeDatos.append(["Tradujiste:",900,425,self.font_2])
-        listaDeDatos.append([str(DiasYaDedicadosTraduccion),585,425,self.font_2])
-        listaDeDatos.append(["Revisaste:",900,375,self.font_2])
-        listaDeDatos.append([str(DiasYaDedicadosRevision),585,375,self.font_2])
-        listaDeDatos.append(["Ambos:",900,325,self.font_2])
-        listaDeDatos.append([str(DiasDedicadosAmbos),585,325,self.font_2])
+            listaDeDatos.append(["Dedicar a Corr.:",900,575,self.font_2])
+        listaDeDatos.append([str(DiasADedicarTrad),585,575,self.font_2])
+        listaDeDatos.append(["Dedicar a Rev.n:",900,525,self.font_2])
+        listaDeDatos.append([str(DiasADedicarRev),585,525,self.font_2])
+        listaDeDatos.append(["Tradujiste:",900,475,self.font_2])
+        listaDeDatos.append([str(DiasYaDedicadosTraduccion),585,475,self.font_2])
+        listaDeDatos.append(["Revisaste:",900,425,self.font_2])
+        listaDeDatos.append([str(DiasYaDedicadosRevision),585,425,self.font_2])
+        listaDeDatos.append(["Ambos:",900,375,self.font_2])
+        listaDeDatos.append([str(DiasDedicadosAmbos),585,375,self.font_2])
         
-        listaDeDatos.append(["Tanto % sobre días",490,850,self.font_2])
+        listaDeDatos.append(["Tanto % sobre días",490,900,self.font_2])
         if Datos[0][7] == "T":
-            listaDeDatos.append(["Trad. Objetivo:",490,775,self.font_2])
+            listaDeDatos.append(["Trad. Objetivo:",490,825,self.font_2])
         else:
-            listaDeDatos.append(["Corr. Objetivo:",490,775,self.font_2])
+            listaDeDatos.append(["Corr. Objetivo:",490,825,self.font_2])
         try:
-            listaDeDatos.append([str(int(TantoCientoParaTraduccion))+"%",190,775,self.font_2])
+            listaDeDatos.append([str(int(TantoCientoParaTraduccion))+"%",190,825,self.font_2])
         except:
-            listaDeDatos.append([" --- ",190,775,self.font_2])
+            listaDeDatos.append([" --- ",190,825,self.font_2])
             
-        listaDeDatos.append(["Rev. Objetivo:",490,725,self.font_2])
+        listaDeDatos.append(["Rev. Objetivo:",490,825,self.font_2])
         try:
-            listaDeDatos.append([str(int(TantoCientoParaRevision))+"%",190,725,self.font_2])
+            listaDeDatos.append([str(int(TantoCientoParaRevision))+"%",190,825,self.font_2])
         except:
-            listaDeDatos.append([" --- ",190,725,self.font_2])
+            listaDeDatos.append([" --- ",190,825,self.font_2])
         if Datos[0][7] == "T":
-            listaDeDatos.append(["Traduc. Real:",490,625,self.font_2])
+            listaDeDatos.append(["Traduc. Real:",490,675,self.font_2])
         else:
-            listaDeDatos.append(["Correg. Real:",490,625,self.font_2])
+            listaDeDatos.append(["Correg. Real:",490,675,self.font_2])
         try:
-            listaDeDatos.append([str(int(PorcientoTraduccionReal))+"%",190,625,self.font_2])
+            listaDeDatos.append([str(int(PorcientoTraduccionReal))+"%",190,675,self.font_2])
+        except:
+            listaDeDatos.append([" --- ",190,675,self.font_2])
+        listaDeDatos.append(["Revisión Real:",490,625,self.font_2])
+        try:
+            listaDeDatos.append([str(int(PorcientoRevisionReal))+"%",190,625,self.font_2])
         except:
             listaDeDatos.append([" --- ",190,625,self.font_2])
-        listaDeDatos.append(["Revisión Real:",490,575,self.font_2])
+        listaDeDatos.append(["Mixto Real:",490,575,self.font_2])
         try:
-            listaDeDatos.append([str(int(PorcientoRevisionReal))+"%",190,575,self.font_2])
+            listaDeDatos.append([str(int(PorcientoMixtoReal))+"%",190,575,self.font_2])
         except:
             listaDeDatos.append([" --- ",190,575,self.font_2])
-        listaDeDatos.append(["Mixto Real:",490,525,self.font_2])
-        try:
-            listaDeDatos.append([str(int(PorcientoMixtoReal))+"%",190,525,self.font_2])
-        except:
-            listaDeDatos.append([" --- ",190,525,self.font_2])
             
-        listaDeDatos.append([" Páginas por traducir a diario desde hoy: "+str(PaginasTraduceAlDiaDesdeHoy),1200,200,self.font_3])
-        listaDeDatos.append([" Páginas por traducir a diario desde mañana: "+str(PaginasTraduceAlDiaDesdeMan),1200,130,self.font_3])
+        listaDeDatos.append([" Páginas por traducir a diario desde hoy: "+str(PaginasTraduceAlDiaDesdeHoy),1200,250,self.font_3])
+        listaDeDatos.append([" Páginas por traducir a diario desde mañana: "+str(PaginasTraduceAlDiaDesdeMan),1200,180,self.font_3])
         
         return listaDeDatos
         
@@ -553,11 +553,6 @@ class Game:
                     int((self.height * posicion[1]) / 1440),
                     int((self.width * posicion[2]) / 3440), 
                     int((self.height * posicion[3]) / 1440)]
-        save = pygame.Surface((posicion[2], posicion[3]))
-        save.blit(self.screen, (0, 0), (posicion[0], 
-                                        posicion[1] - int((self.height * 30) / 1440), 
-                                        posicion[2],
-                                        posicion[3]))
 
         cotejo = True
         chain = ">"
@@ -627,7 +622,8 @@ class Game:
             elif chain == "":
                 chain = ">"
 
-            self.screen.blit(save, (posicion[0], posicion[1] - int((self.height * 30) / 1440)))
+            chain = str(chain)
+            self.screen.fill((247, 241, 238), (posicion[0], posicion[1] - int((self.height * 19) / 1440), posicion[2], posicion[3]))
             texto_escribe = self.font_2.render(chain, True, (0, 0, 200))
             text_rect = texto_escribe.get_rect(left=posicion[0], centery=posicion[1])
             self.screen.blit(texto_escribe, text_rect)
