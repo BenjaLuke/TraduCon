@@ -217,10 +217,34 @@ def menuProyectoCorrigeBase(proyecto,proyectoSinExt):
 
     if datos_a_recuperar[0] == "A": 
         os.rename("Database/"+proyecto,"Database/"+proyecto.split(".")[0]+".dba")
+        try:
+            os.remove("Database/"+proyecto.split(".")[0]+".dbi")
+        except:
+            pass
+        try:
+            os.remove("Database/"+proyecto.split(".")[0]+".dbc")
+        except:
+            pass
     elif datos_a_recuperar[0] == "I":
         os.rename("Database/"+proyecto,"Database/"+proyecto.split(".")[0]+".dbi")
+        try:
+            os.remove("Database/"+proyecto.split(".")[0]+".dba")
+        except:
+            pass
+        try:
+            os.remove("Database/"+proyecto.split(".")[0]+".dbc")
+        except:
+            pass
     elif datos_a_recuperar[0] == "C":
         os.rename("Database/"+proyecto,"Database/"+proyecto.split(".")[0]+".dbc")
+        try:
+            os.remove("Database/"+proyecto.split(".")[0]+".dba")
+        except:
+            pass
+        try:
+            os.remove("Database/"+proyecto.split(".")[0]+".dbi")
+        except:
+            pass
                                                                           
     mensajeConPausa("Cambio realizado con éxito")        
     

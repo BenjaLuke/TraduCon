@@ -5,7 +5,11 @@ a petición de un traductor, se me encarga este proyecto.
 
 Utilizo POO para toda la parte gráfica, pero funciones para el resto. Separo carpetas por funciones SQL, funciones matemáticas y Clases.
 
-Liándome la manta a la cabeza, decido hacer una aplicación con una librería para videojuegos (pygame). La esperiencia es satisfactoria y muy enriquecedora
+Liándome la manta a la cabeza, decido hacer una aplicación con una librería para videojuegos (pygame). La experiencia es satisfactoria y muy enriquecedora
+
+versión 2.14
+
+- Corregido bugg (al cambiar el estado de un proyecto, no se borraba el archivo en estado anterior)
 
 versión 2.13
 
