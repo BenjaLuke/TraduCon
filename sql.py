@@ -36,7 +36,7 @@ def MuestraDato(carpeta,dato,tabla):
     CierraBd(apertura)                                      
     return fila                                             
 
-def Modificar(cursor,sentencia,parametros):                                     
+def Modificar(cursor,sentencia,parametros):                                         
     cursor.execute(sentencia,parametros)    
     cursor.connection.commit()              
 

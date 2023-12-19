@@ -1,4 +1,5 @@
 from datetime import datetime
+import game
 
 def Errores(cadena, error):
     if error == 0:
@@ -79,7 +80,7 @@ def EsReal(cadena):
         return False
 def EsNombreArchivo(cadena):
         símbolos_no_permitidos = ['/','\\',':','*','?','"','<','>','[',']','{','}','=','!','\'',',',';','.']        
-        if any(símbolo in cadena for símbolo in símbolos_no_permitidos) or cadena == "":   
+        if any(símbolo in cadena for símbolo in símbolos_no_permitidos) or cadena == "":               
             return False
         else:
             return True

@@ -157,11 +157,9 @@ def menuProyectoCorrige(proyecto,proyectoSinExt):
     return
 
 def menuProyectoCorrigeBase(proyecto,proyectoSinExt):           
-     
+    
     carpeta = "Database/{}".format(proyecto)                                
-    conexion,cursor = sql.creaAbreBd(carpeta)                                   
-    listado = sql.SeleccionaTodasFilas(carpeta,"Datos")
-                         
+    listado = sql.SeleccionaTodasFilas(carpeta,"Datos")               
     listadoExtra = [listado[0][0],listado[0][1],listado[0][2],
                     listado[0][3],listado[0][4],listado[0][5],
                     listado[0][6],listado[0][7],listado[0][8],
@@ -232,46 +230,14 @@ def menuProyectoCorrigeProceso(proyecto,proyectoSinExt):
     in_function = True
     while in_function:
         
-        carpeta = "Database/{}".format(proyecto)                            
-        try:
-            
-            tabla = sql.SeleccionaTodasFilas(carpeta,"Proceso")             
-            listaDatosTablaProceso(proyecto,proyectoSinExt,[150,1050,1410,220])             
-
-        except:
-            
-            mensajeConPausa("No hay procesos para este proyecto")
-            in_function = False
-            
-        screen.paper(1000,400,3,2)
-        screen.textAlone(750,1100,f"Elige el ID del proceso a corregir:")                                         
-        screen.updateScreen()
-        id_seleccionado = screen.AnswerChain([1400,1100,200,40],4)        
-
+        id_seleccionado, tabla, carpeta, in_function = PintaListaCorrecta("Proceso",proyecto,proyectoSinExt,listaDatosTablaProceso)
+        if in_function == False: break
+       
         conexion,cursor = sql.creaAbreBd(carpeta)                                                   
         
-        try:
-            
-            fila = ""
-            for fila_adecuada in tabla:  
-                               
-                if fila_adecuada[0] == int(id_seleccionado): 
-                     
-                    fila = fila_adecuada                
-                    break 
-                                              
-            if fila == "": 
-                   
-                screen.SoundWrongAnswer()
-                mensajeConPausa("No existe ese ID")
-                in_function = False
-            
-        except:
-            
-            screen.SoundWrongAnswer()
-            mensajeConPausa("Error en la lectura del archivo")    
-            in_function = False
-            
+        fila, in_function = abreIdSeleccionado(tabla,id_seleccionado)
+        if in_function == False: break
+                
         datos_a_pintar = [f"Modifica proceso de {proyectoSinExt} fila {id_seleccionado}","",
                         f"Fecha: {fila[1]}", f"Páginas: {fila[2]}",
                         f"Tipo (T)rad./correc (R)evisión) {fila[3]}:"]
@@ -322,46 +288,14 @@ def menuProyectoCorrigeExcepciones(proyecto,proyectoSinExt):
     in_function = True
     while in_function:
         
-        carpeta = "Database/{}".format(proyecto)                            
-        try:
-            
-            tabla = sql.SeleccionaTodasFilas(carpeta,"Excepciones")             
-            listaTablaExcepciones(proyecto,proyectoSinExt,[150,1050,1305,220])               
-
-        except:
-            mensajeConPausa("No hay excepciones para este proyecto")
-            in_function = False
-            
-        screen.paper(1000,400,3,2)
-        screen.textAlone(750,1100,f"Elige el ID de la excepción a corregir:")                                         
-        screen.updateScreen()
-        id_seleccionado = screen.AnswerChain([1400,1100,200,40],4)
+        id_seleccionado, tabla, carpeta, in_function = PintaListaCorrecta("Excepciones",proyecto,proyectoSinExt,listaTablaExcepciones)
+        if in_function == False: break
         
         conexion,cursor = sql.creaAbreBd(carpeta)                                                   
-        try:
-            
-            fila = ""
-            
-            for fila_adecuada in tabla:      
-                           
-                if fila_adecuada[0] == int(id_seleccionado):  
-                    
-                    fila = fila_adecuada                
-                    break 
-                                              
-            if fila == "": 
-                   
-                screen.SoundWrongAnswer()
-                mensajeConPausa("ID inexistente")
-                in_function = False
-                break
-            
-        except:
-            
-            screen.SoundWrongAnswer()
-            mensajeConPausa("Error en la lectura del archivo")    
-            in_function = False
-            
+        
+        fila, in_function = abreIdSeleccionado(tabla,id_seleccionado)
+        if in_function == False: break
+        
         datos_a_pintar = [f"Modifica excepción de {proyectoSinExt} fila {id_seleccionado}","",
                             f"Fecha: {fila[1]}"]
         
@@ -398,6 +332,55 @@ def menuProyectoCorrigeExcepciones(proyecto,proyectoSinExt):
         in_function = False
         
     return                         
+
+def abreIdSeleccionado(tabla,id_seleccionado):
+    
+    try:
+            
+        fila = ""
+            
+        for fila_adecuada in tabla:      
+                           
+            if fila_adecuada[0] == int(id_seleccionado):  
+                    
+                fila = fila_adecuada                
+                break 
+                                              
+        if fila == "": 
+                   
+            screen.SoundWrongAnswer()
+            mensajeConPausa("ID inexistente")
+            return fila,False
+            
+    except:
+            
+        screen.SoundWrongAnswer()
+        mensajeConPausa("Error en la lectura del archivo")    
+        return fila,False
+    
+    return fila,True        
+
+def PintaListaCorrecta(nombre_carpeta,proyecto,proyectoSinExt,listaAMostrar):
+    
+    tabla = []
+    carpeta = "Database/{}".format(proyecto)
+    try:
+        
+        tabla = sql.SeleccionaTodasFilas(carpeta,nombre_carpeta)
+        listaAMostrar(proyecto,proyectoSinExt,[150,1050,1410,220])
+        
+    except:
+        
+        screen.SoundWrongAnswer()
+        mensajeConPausa("Lista vacía")
+        return "",tabla, carpeta, False
+    
+    screen.paper(1000,400,3,2)
+    screen.textAlone(750,1100,f"Elige ID:")
+    screen.updateScreen()
+    id_seleccionado = screen.AnswerChain([1400,1100,200,40],4)
+    
+    return id_seleccionado, tabla, carpeta, True 
   
 def menuProyectoAnade(proyecto,proyectoSinExt):                 
     
@@ -691,7 +674,7 @@ def listaTablaExcepciones(proyecto,proyectoSinExt,posiciones):
             
             valor = len(tabla)+2
             
-        screen.paper(posiciones[0],posiciones[1],valor,1)
+        screen.paper(posiciones[0],posiciones[1],valor,2)
         screen.textAlone(posiciones[2],posiciones[3],"Excepciones de "+proyectoSinExt)
         
     except:
@@ -703,7 +686,7 @@ def listaTablaExcepciones(proyecto,proyectoSinExt,posiciones):
     posicion = posiciones[3]+int((screen.height*100)/1440)
     for i in tabla:
         
-        screen.textAlone(posiciones[2],posicion,f"{i[0]} - El {i[1]}, no se trabaja")
+        screen.textAlone(posiciones[2],posicion,f"{i[0]} - El {i[1]} no se trabaja")
         posicion += 59    
     
     return
@@ -755,28 +738,10 @@ def menuProyectoEliminaProceso(proyecto,proyectoSinExt):
             
     in_function = True
     while in_function:
-            
-        carpeta = "Database/{}".format(proyecto)                            
-        try:
-            
-            tabla = sql.SeleccionaTodasFilas(carpeta,"Proceso")             
         
-        except:
-            
-            screen.paper(1000,400,3,2)
-            screen.textAlone(750,1159,"No hay procesos para este proyecto")
-            screen.updateScreen()
-            time.sleep(2)
-            screen.paper(1000,400,3,2)
-            in_function = False
-            break
-                                                
-        listaDatosTablaProceso(proyecto,proyectoSinExt,[300,2100,2450,420])             
-        screen.paper(1000,400,3,2)
-        screen.textAlone(750,1100,f"Elige el ID del proceso a borrar:")                                         
-        screen.updateScreen()
-        
-        id_seleccionado = screen.AnswerChain([1400,1100,200,40],4)
+        id_seleccionado, tabla, carpeta, in_function = PintaListaCorrecta("Proceso",proyecto,proyectoSinExt,listaDatosTablaProceso)    
+        if in_function == False: break
+               
         screen.textAlone(750,1159,f"¿Quieres eliminar el proceso {id_seleccionado}? (S/N): ")                                         
         screen.updateScreen()
         
@@ -798,7 +763,7 @@ def menuProyectoEliminaProceso(proyecto,proyectoSinExt):
                     conexion,cursor = sql.creaAbreBd(carpeta)                               
                     sql.EliminaFilaenTabPro(cursor,"Proceso",id_de_linea_a_borrar)                   
                     sql.CierraBd(conexion)                                              
-                    mensajeConPausa("Proyecto eliminado con éxito")
+                    mensajeConPausa("Proceso eliminado con éxito")
                     listaDatosTablaProceso(proyecto,proyectoSinExt,[300,2100,2385,420])  
                                
                 else:
@@ -819,27 +784,10 @@ def menuProyectoEliminaExcepcion(proyecto,proyectoSinExt):
 
     in_function = True
     while in_function:
-                 
-        carpeta = "Database/{}".format(proyecto)                                                
-        try:
         
-            tabla = sql.SeleccionaTodasFilas(carpeta,"Excepciones")                                 
+        id_seleccionado, tabla, carpeta, in_function = PintaListaCorrecta("Excepciones",proyecto,proyectoSinExt,listaTablaExcepciones)         
+        if in_function == False: break
         
-        except:
-        
-            screen.paper(1000,400,3,2)
-            screen.textAlone(750,1159,"No hay excepciones para este proyecto")
-            screen.updateScreen()
-            time.sleep(2)
-            screen.paper(1000,400,3,2)
-            in_function = False                                          
-        
-        listaTablaExcepciones(proyecto,proyectoSinExt,[300,2100,2345,420])               
-        screen.paper(1000,400,3,2)
-        screen.textAlone(750,1100,f"Elige el ID de la excepción a borrar:")                                         
-        screen.updateScreen()
-        
-        id_seleccionado = screen.AnswerChain([1400,1100,200,40],4)
         screen.textAlone(750,1159,f"¿Quieres eliminar la excepción {id_seleccionado}? (S/N): ")                                         
         screen.updateScreen()
         
@@ -946,7 +894,7 @@ def menuCreaProyecto():
                             EurosPagina REAL,
                             TantoCientoCorrec INTEGER,
                             Notas TEXT)
-    '''                                                                                     
+                    '''                                                                                     
     if estado == "A":   
                                                                     
         BdProyecto,cursor = sql.creaAbreBd(f"Database/{nombre}.dba")   
@@ -1034,17 +982,18 @@ def creaCliente():
     listado,carpeta = preparaListaClientes()
     listaClientes(listado)
 
-    datos_a_pintar = ["Creando un cliente","","Nombre:","",
-                      "Teléfono:","Dirección:","NIF:",
-                      "Contacto:","Teléfono contacto:",
-                      "Email contacto:","Pago previo:"]
+    datos_a_pintar = ["Creando un cliente","", "Nombre:","",
+                      "Teléfono:", "Dirección:", "Ciudad:",
+                      "C.P.:", "País:", "NIF:",
+                      "Contacto:", "Teléfono contacto:",
+                      "Email contacto:", "Pago previo:"]
     in_function = True
     while in_function:   
          
         in_answer = True
         while in_answer:  
               
-            screen.paper(150,1200,11,2)    
+            screen.paper(150,1200,14,2)    
             posicion = 225
             for i in datos_a_pintar:
                 
@@ -1053,9 +1002,9 @@ def creaCliente():
                 
             screen.updateScreen()
             nombre = screen.AnswerChain([2000,346,600,40],9)
-            telefono,direccion,nif,contacto,telefono_contacto,email_contacto,pago_previo = cuestionarioClientes()
+            telefono,direccion,ciudad,cp, pais,nif,contacto,telefono_contacto,email_contacto,pago_previo = cuestionarioClientes()
 
-            screen.textAlone(1555,877,"¿Son correctos los datos (S/N)?")
+            screen.textAlone(1555,1054,"¿Son correctos los datos (S/N)?")
             screen.updateScreen()
             respuesta = screen.pushAndCome()
             if respuesta.upper() == "S":
@@ -1063,17 +1012,17 @@ def creaCliente():
                 in_answer = False
             
         conexion,cursor = sql.creaAbreBd(carpeta)                           
-        insertamos = f'INSERT INTO Clientes (Nombre, Telefono, Direccion, Nif, Contacto, TelContacto, EmailContacto,PagoPrevio ) VALUES (:nombre, :telefono, :direccion, :nif, :contacto, :telContacto, :emailContacto, :pagoPrevio)'   
+        insertamos = f'INSERT INTO Clientes (Nombre, Telefono, Direccion, Ciudad, cp, pais, Nif, Contacto, TelContacto, EmailContacto,PagoPrevio ) VALUES (:nombre, :telefono, :direccion, :ciudad, :cp, :pais, :nif, :contacto, :telContacto, :emailContacto, :pagoPrevio)'   
         esos_datos = {'nombre' : nombre, 'telefono' : telefono, 
-                'direccion' : direccion, 'nif' : nif, 
-                'contacto' : contacto, 'telContacto' : telefono_contacto, 
+                'direccion' : direccion, 'ciudad' : ciudad, 'cp' : cp, 'pais' : pais,
+                'nif' : nif, 'contacto' : contacto, 'telContacto' : telefono_contacto, 
                 'emailContacto' : email_contacto, 'pagoPrevio' : pago_previo}                                
         sql.anadeFila(cursor,insertamos,esos_datos,conexion)                                            
         sql.CierraBd(conexion) 
                                                                                      
         listado,carpeta = preparaListaClientes()                                            
         listaClientes(listado)                                            
-        screen.textAlone(1555,936,"¿Quieres crear otro cliente (S/N)?")
+        screen.textAlone(1555,1113,"¿Quieres crear otro cliente (S/N)?")
         screen.updateScreen()
         
         respuesta = screen.pushAndCome()
@@ -1088,13 +1037,16 @@ def cuestionarioClientes():
                                                   
     telefono = screen.AnswerChain([2000,464,600,40],4)
     direccion = screen.AnswerChain([2000,523,600,40])
-    nif = screen.AnswerChain([2000,582,600,40])
-    contacto = screen.AnswerChain([2000,641,600,40])
-    telefono_contacto = screen.AnswerChain([2000,700,600,40],4)
-    email_contacto = screen.AnswerChain([2000,759,600,40])
-    pago_previo = screen.AnswerChain([2000,818,600,40],4)
+    ciudad = screen.AnswerChain([2000,582,600,40])
+    cp = screen.AnswerChain([2000,641,600,40],4)
+    pais = screen.AnswerChain([2000,700,600,40])
+    nif = screen.AnswerChain([2000,759,600,40])
+    contacto = screen.AnswerChain([2000,818,600,40])
+    telefono_contacto = screen.AnswerChain([2000,877,600,40],4)
+    email_contacto = screen.AnswerChain([2000,936,600,40])
+    pago_previo = screen.AnswerChain([2000,995,600,40],4)
     
-    return telefono,direccion,nif,contacto,telefono_contacto,email_contacto,pago_previo
+    return telefono,direccion,ciudad,cp,pais,nif,contacto,telefono_contacto,email_contacto,pago_previo
     
 def consultaCliente():     
                                          
@@ -1137,7 +1089,7 @@ def consultaCliente():
         
         screen.paper(100,700,valor,2)
         screen.textAlone(435,220,"Datos del cliente "+cliente)
-        titulos = ["ID","Nombre:","Teléfono:","Dirección:","NIF:","Contacto:","Teléfono contacto:","Email contacto:","Pago previo:"]
+        titulos = ["ID","Nombre:","Teléfono:","Dirección:","Ciudad:","C.P.:","País:","NIF:","Contacto:","Teléfono contacto:","Email contacto:","Pago previo:"]
         posicion = 320
         orden = 0
         for i in filas[0]:
@@ -1154,7 +1106,22 @@ def consultaCliente():
 def preparaListaClientes():
     
     carpeta =           "Database/Clientes.db"                                                        
-    conexion,cursor =   sql.creaAbreBd(carpeta)                                                   
+    conexion,cursor =   sql.creaAbreBd(carpeta)
+    insercionDatos =    '''CREATE TABLE IF NOT EXISTS Clientes(ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                        Nombre TEXT, 
+                        Telefono TEXT, 
+                        Direccion TEXT, 
+                        Ciudad TEXT, 
+                        cp TEXT, 
+                        pais TEXT,
+                        Nif TEXT,
+                        Contacto TEXT,
+                        TelContacto TEXT,
+                        EmailContacto TEXT,
+                        PagoPrevio TEXT)                        
+                        '''   
+    cursor =            sql.CreaUnaTabla(cursor,insercionDatos)           
+                                                        
     consulta =          "SELECT Nombre FROM Clientes;"                                               
     listado =           sql.listados(cursor,consulta)                                          
     sql.CierraBd(conexion) 
@@ -1209,13 +1176,15 @@ def modificaCliente():
         fila = sql.MuestraDato(carpeta,cliente,"Clientes")
         
         datos_a_pintar = [f"Modificando un cliente","",f"Nombre: {fila[0][1]}","",f"Teléfono: {fila[0][2]}",
-                          f"Dirección: {fila[0][3]}",f"NIF: {fila[0][4]}",f"Contacto: {fila[0][5]}",
-                          f"Teléfono contacto: {fila[0][6]}",f"Email contacto: {fila[0][7]}",
-                          f"Pago previo: {fila[0][8]}"]
+                          f"Dirección: {fila[0][3]}",f"Ciudad: {fila[0][4]}", f"C.P.: {fila[0][5]}",
+                          f"País: {fila[0][6]}",
+                          f"NIF: {fila[0][7]}",f"Contacto: {fila[0][8]}",
+                          f"Teléfono contacto: {fila[0][9]}",f"Email contacto: {fila[0][10]}",
+                          f"Pago previo: {fila[0][11]}"]
         
         mensajeConPausa("Introduce datos (en blanco, mantiene antiguo)")
         
-        screen.paper(150,1200,11,2)
+        screen.paper(150,1200,13,2)
         posicion = 225
         for i in datos_a_pintar:
             
@@ -1233,12 +1202,14 @@ def modificaCliente():
                 cliente[i] = fila[0][i+2]
         try:
             
-            sentencia = """UPDATE Clientes SET Telefono = ?, Direccion = ?,
+            sentencia = """UPDATE Clientes SET Telefono = ?, Direccion = ?, Ciudad = ?, cp = ?, pais = ?,
                         Nif = ?, Contacto = ?, TelContacto = ?, EmailContacto = ?,
-                        PagoPrevio = ? WHERE Nombre = ?"""
+                        PagoPrevio = ? WHERE ID = ?"""
             parametros = (cliente[0], cliente[1], cliente[2],
                         cliente[3], cliente[4], cliente[5],
-                        cliente[6], id_seleccionado)
+                        cliente[6], cliente[7], cliente[8],
+                        cliente[9],  
+                        id_seleccionado)
             conexion,cursor = sql.creaAbreBd(carpeta)
             sql.Modificar(cursor,sentencia,parametros)
             sql.CierraBd(conexion)

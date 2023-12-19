@@ -21,7 +21,7 @@ class Game:
         self.screen = pygame.display.set_mode((self.width, self.height),)# pygame.FULLSCREEN)
 
         
-        pygame.display.set_caption("Tradcon")
+        pygame.display.set_caption("Tradu con")
 
         
         pygame.mixer.init()
@@ -56,7 +56,7 @@ class Game:
         self.logoBig = pygame.transform.scale(self.logoBig, ((self.width*669)/3440, (self.height*609)/1440))
 
         
-        self.font_1 = pygame.font.Font("EXTRAS/BeautifulPeoplePersonalUse-dE0g.ttf", int((self.width*30)/3440))
+        self.font_1 = pygame.font.Font("EXTRAS/JMH Typewriter-Bold.ttf", int((self.width*30)/3440))
         self.font_2 = pygame.font.Font("EXTRAS/JMH Typewriter-Bold.ttf", int((self.width*30)/3440))
         self.font_3 = pygame.font.Font("EXTRAS/JMH Typewriter-Bold.ttf", int((self.width*40)/3440))
         
@@ -261,16 +261,18 @@ class Game:
                 
         DiasDedicadosAmbos          = 0                             
         ListasComparadas        = []                                
-        ListasCoincidentes      = []                                
-        for i,Proceso in enumerate(Procesos):                       
-            if Proceso in ListasComparadas:                         
-                continue                                            
-            else:                                                   
-                ValorAComparar = Proceso[1]                         
-                for j in range(i+1,len(Procesos)):                  
-                    if Procesos[j][1] == ValorAComparar:            
-                        ListasCoincidentes.append([i,j])            
-                        ListasComparadas.append(Procesos[j])        
+        ListasCoincidentes      = [] 
+        
+        if DiasYaDedicadosRevision != 0 and DiasYaDedicadosTraduccion != 0:                               
+            for i,Proceso in enumerate(Procesos):                       
+                if Proceso in ListasComparadas:                         
+                    continue                                            
+                else:                                                   
+                    ValorAComparar = Proceso[1]                         
+                    for j in range(i+1,len(Procesos)):                  
+                        if Procesos[j][1] == ValorAComparar:            
+                            ListasCoincidentes.append([i,j])            
+                            ListasComparadas.append(Procesos[j])        
         DiasDedicadosAmbos = len(ListasCoincidentes)                
         
         try:
@@ -363,7 +365,7 @@ class Game:
         else:
             listaDeDatos.append(["Dedicar a Corr.:",900,575,self.font_2])
         listaDeDatos.append([str(DiasADedicarTrad),585,575,self.font_2])
-        listaDeDatos.append(["Dedicar a Rev.n:",900,525,self.font_2])
+        listaDeDatos.append(["Dedicar a Rev.:",900,525,self.font_2])
         listaDeDatos.append([str(DiasADedicarRev),585,525,self.font_2])
         listaDeDatos.append(["Tradujiste:",900,475,self.font_2])
         listaDeDatos.append([str(DiasYaDedicadosTraduccion),585,475,self.font_2])
@@ -382,11 +384,11 @@ class Game:
         except:
             listaDeDatos.append([" --- ",190,825,self.font_2])
             
-        listaDeDatos.append(["Rev. Objetivo:",490,825,self.font_2])
+        listaDeDatos.append(["Rev. Objetivo:",490,775,self.font_2])
         try:
-            listaDeDatos.append([str(int(TantoCientoParaRevision))+"%",190,825,self.font_2])
+            listaDeDatos.append([str(int(TantoCientoParaRevision))+"%",190,775,self.font_2])
         except:
-            listaDeDatos.append([" --- ",190,825,self.font_2])
+            listaDeDatos.append([" --- ",190,775,self.font_2])
         if Datos[0][7] == "T":
             listaDeDatos.append(["Traduc. Real:",490,675,self.font_2])
         else:
@@ -549,11 +551,13 @@ class Game:
         return envio
     
     def AnswerChain(self,posicion, error = 0):
+                
         posicion = [int((self.width * posicion[0]) / 3440), 
                     int((self.height * posicion[1]) / 1440),
                     int((self.width * posicion[2]) / 3440), 
                     int((self.height * posicion[3]) / 1440)]
 
+        ancho_texto = 0
         cotejo = True
         chain = ">"
         shift_pressed = False
@@ -563,7 +567,7 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     tecla_pulsada = event.unicode
-                    if event.key in (pygame.K_LSHIFT, pygame.K_RSHIFT):
+                    if event.key in (pygame.K_LSHIFT, pygame.K_RSHIFT):    
                         shift_pressed = True
                     elif event.key == pygame.K_CAPSLOCK:
                         caps_pressed = not caps_pressed
@@ -577,6 +581,8 @@ class Game:
                         if termina:
                             self.typewriter_carro.play()
                             cotejo = False
+                        else:
+                            self.wrong.play()
                     elif event.key == pygame.K_BACKSPACE:
                         if len(chain) > 0:
                             self.typewriter_borrar.play()
@@ -589,25 +595,28 @@ class Game:
                             if shift_pressed:
                                 tecla_pulsada = tecla_pulsada.upper()
                                                             
-                            if tecla_pulsada == " ":
+                            if tecla_pulsada == " " and ancho_texto < posicion[2]-int((self.width*20)/3440):
                                 self.typewriter_espacio.play()
                             else:
-                                aleatorio = random.randint(0, 5)
-                                self.typewriter[aleatorio].play()
-
+                                if ancho_texto < posicion[2]-int((self.width*20)/3440):
+                                    aleatorio = random.randint(0, 5)
+                                    self.typewriter[aleatorio].play()
+                                else:
+                                    self.wrong.play()
                             if len(chain) > 1:
                                 if chain[-1] == ">":
                                     chain = chain[:-1]
                                 elif chain == ">":
                                     chain = ""
                                     
-                            if tecla_pulsada != "`":
+                            if tecla_pulsada != "`" and ancho_texto < posicion[2]-int((self.width*20)/3440):
                                 chain += tecla_pulsada
 
                             if chain[0] == ">":
                                 chain = chain[1:]
                         except:
                             pass
+                            
                 elif event.type == pygame.KEYUP:
                     if event.key in (pygame.K_LSHIFT, pygame.K_RSHIFT):
                         shift_pressed = False
@@ -627,6 +636,7 @@ class Game:
             texto_escribe = self.font_2.render(chain, True, (0, 0, 200))
             text_rect = texto_escribe.get_rect(left=posicion[0], centery=posicion[1])
             self.screen.blit(texto_escribe, text_rect)
+            ancho_texto = texto_escribe.get_width()
             self.updateScreen()
 
         if len(chain) > 1 and chain[-1] == ">" or chain == ">":
