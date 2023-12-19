@@ -210,7 +210,8 @@ def menuProyectoCorrigeBase(proyecto,proyectoSinExt):
                   datos_a_recuperar[3], datos_a_recuperar[7], datos_a_recuperar[4],
                   datos_a_recuperar[5], datos_a_recuperar[6], datos_a_recuperar[8],
                   datos_a_recuperar[9], datos_a_recuperar[10], datos_a_recuperar[11],
-                  datos_a_recuperar[12], datos_a_recuperar[13])                       
+                  datos_a_recuperar[12], datos_a_recuperar[13])   
+    conexion,cursor = sql.creaAbreBd(carpeta)                    
     sql.Modificar(cursor,sentencia,parametros)                              
     sql.CierraBd(conexion)  
 
@@ -548,7 +549,7 @@ def listaDatosTablasBase(proyecto,proyectoSinExt):
     
     carpeta = "Database/{}".format(proyecto)                
     tabla = sql.SeleccionaTodasFilas(carpeta,"Datos")       
-    screen.paper(150,1200,13,1)
+    screen.paper(150,1200,13,2)
     datos_a_pintar = [proyectoSinExt,"","Estado:","Cliente:",
                       "Inicio Proyecto:","Fecha Entrega:","Unidad de cálculo:",
                       "Páginas de origen:","Tipo Trabajo:","Tabla Usar:",
@@ -557,7 +558,7 @@ def listaDatosTablasBase(proyecto,proyectoSinExt):
     posicion = 220
     for i in datos_a_pintar:
         
-        screen.textAlone(1435,posicion,i)
+        screen.textAlone(1585,posicion,i)
         posicion += 59
     
     posicion = 220
@@ -585,11 +586,21 @@ def listaDatosTablasBase(proyecto,proyectoSinExt):
             
             if i == "O":    i = "Origen"
             elif i == "D":  i = "Destino"
+        # Si "frase" es el valor que denota al cliente
+        elif frase == 2:
+                # Busca en la tabla de clientes el ID = frase
+                carpeta = "Database/Clientes.db"
+                tabla = sql.SeleccionaTodasFilas(carpeta,"Clientes")
+                for a in tabla:
+                        if a[0] == int(i):
+                            
+                            i = a[1]
+                            break
             
         elif posicion == int((screen.height*220)/1440):
             
             i = ""    
-        screen.textAlone(1795,posicion,str(i))
+        screen.textAlone(1945,posicion,str(i))
         if posicion == int((screen.height*220)/1440):
             
             posicion += 59
