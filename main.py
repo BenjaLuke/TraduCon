@@ -122,7 +122,7 @@ def menuProyectoCRUD(proyecto,proyectoSinExt):
         screen.paper(150,300,11)
         screen.text(250,500,[f"'{proyectoSinExt}'",
                     "1 - Corrige un dato","2 - Añade un dato","3 - Elimina dato/proyecto",
-                    "4 - Gráficas","5 - Consultar tablas"])
+                    "4 - Gráficas","5 - Consultar datos"])
         screen.updateScreen()
         
         destino = screen.pushAndCome()
@@ -182,7 +182,7 @@ def menuProyectoCorrigeBase(proyecto,proyectoSinExt):
     for i in datos_a_pintar:
         
         screen.textAlone(1545,posicion,i)
-        posicion += 59
+        posicion += 49
         
     
     datos_necesarios = [listadoExtra[6],listadoExtra[4]]
@@ -195,12 +195,12 @@ def menuProyectoCorrigeBase(proyecto,proyectoSinExt):
                     listadoExtra[10],listadoExtra[11],listadoExtra[12],
                     listadoExtra[13],listadoExtra[14]]
     
-    for i in range(len(datos_a_recuperar)):
+    for i in range(len(datos_a_recuperar)-1):
     
         if datos_a_recuperar[i] == "":
     
             datos_a_recuperar[i] = listadoExtra[i]
-    
+    datos_a_recuperar[13] = listadoExtra[13] + " - " + datos_a_recuperar[13]
     sentencia = """UPDATE Datos SET Estado = ?, Cliente = ?, IncioProyecto = ?, 
                                     FechaEntrega = ?, UnidadCalculo = ?, PáginasOrigen = ?, 
                                     TipoTrabajo = ?, TablaUsar = ?, CaracteresHolandesa = ?, 
@@ -274,7 +274,7 @@ def menuProyectoCorrigeProceso(proyecto,proyectoSinExt):
         for i in datos_a_pintar:
             
             screen.textAlone(1555,posicion,i)
-            posicion += 59
+            posicion += 49
             
         screen.updateScreen()
         
@@ -330,7 +330,7 @@ def menuProyectoCorrigeExcepciones(proyecto,proyectoSinExt):
         for i in datos_a_pintar:
             
             screen.textAlone(1555,posicion,i)
-            posicion += 59
+            posicion += 49
             
         screen.updateScreen()
         fecha = cuestionarioExcepciones()
@@ -450,26 +450,50 @@ def menuProyectoAnadeProceso(proyecto,proyectoSinExt):
             for i in datos_a_pintar:
                 
                 screen.textAlone(1555,posicion,i)
-                posicion += 59
+                posicion += 49
                 
             screen.updateScreen()
             fecha,paginas,tipo = cuestionarioProcesos([1,4,12])
-            screen.textAlone(1505,520,"Son correctos los datos introducidos? (S/N): ")
+            screen.textAlone(1555,520,"Son correctos los datos introducidos? (S/N): ")
             screen.updateScreen()
             
             respuesta = screen.pushAndCome()
             if respuesta.upper() == "S":
-                           
+                # Revisa las excepciones y si la fecha del proceso introducido coincide con alguna excepción, se elimina esa excepción
+                carpeta = "Database/{}".format(proyecto)
+                tabla = sql.SeleccionaTodasFilas(carpeta,"Excepciones")
+                for i in tabla:
+                    if i[1] == fecha:
+                        conexion,cursor = sql.creaAbreBd(carpeta)
+                        sentencia = "DELETE FROM Excepciones WHERE Fecha = ?"
+                        parametros = (fecha,)
+                        sql.Modificar(cursor,sentencia,parametros)
+                        sql.CierraBd(conexion)
+                        break
+                # Revisa los procesos y si la fecha del proceso introducido coincide con algún proceso  y el tipo de trabajo es el mismo, se suman los días
+                tabla = sql.SeleccionaTodasFilas(carpeta,"Proceso")
+                debemos_grabar = True
+                for i in tabla:
+                    if i[1] == fecha and i[3] == tipo:
+                        conexion,cursor = sql.creaAbreBd(carpeta)
+                        sentencia = "UPDATE Proceso SET Paginas = ? WHERE Fecha = ? AND Tipo = ?"
+                        parametros = (str(int(paginas)+int(i[2])),fecha,tipo)
+                        sql.Modificar(cursor,sentencia,parametros)
+                        sql.CierraBd(conexion)
+                        debemos_grabar = False
+                        break               
                 in_answer = False
         
-        conexion,cursor = sql.creaAbreBd("Database/{}".format(proyecto))                   
-        introducimos = 'INSERT INTO Proceso (Fecha,Paginas,Tipo) VALUES (:Fecha,:Paginas,:Tipo)'
-        parametros = {'Fecha':fecha,'Paginas':paginas,'Tipo':tipo}
-        sql.anadeFila(cursor,introducimos,parametros,conexion)
-        sql.CierraBd(conexion)                                      
+        if debemos_grabar == True:
+            conexion,cursor = sql.creaAbreBd("Database/{}".format(proyecto))                   
+            introducimos = 'INSERT INTO Proceso (Fecha,Paginas,Tipo) VALUES (:Fecha,:Paginas,:Tipo)'
+            parametros = {'Fecha':fecha,'Paginas':paginas,'Tipo':tipo}
+            sql.anadeFila(cursor,introducimos,parametros,conexion)
+            sql.CierraBd(conexion)                                      
         
         listaDatosTablaProceso(proyecto,proyectoSinExt,[300,2100,2450,420])             
         
+        screen.paper(400,1100,3,2)
         screen.textAlone(1555,579,"¿Quieres añadir otro proceso? (S/N): ")
         screen.updateScreen()
         respuesta = screen.pushAndCome()
@@ -482,9 +506,9 @@ def menuProyectoAnadeProceso(proyecto,proyectoSinExt):
 
 def cuestionarioProcesos(errores):
     
-    fecha =     screen.AnswerChain([2080,343,500,40], errores[0])
-    paginas =   screen.AnswerChain([2080,402,500,40], errores[1])
-    tipo =      screen.AnswerChain([2080,461,500,40], errores[2])
+    fecha =     screen.AnswerChain([2080,323,500,40], errores[0])
+    paginas =   screen.AnswerChain([2080,372,500,40], errores[1])
+    tipo =      screen.AnswerChain([2080,421,500,40], errores[2])
     
     return fecha,paginas,tipo
 
@@ -509,7 +533,7 @@ def menuProyectoAnadeExcepcion(proyecto,proyectoSinExt):
             for i in datos_a_pintar:
                 
                 screen.textAlone(1555,posicion,i)
-                posicion += 59
+                posicion += 49
                 
             screen.updateScreen()
             fecha = cuestionarioExcepciones()
@@ -518,7 +542,17 @@ def menuProyectoAnadeExcepcion(proyecto,proyectoSinExt):
             respuesta = screen.pushAndCome()
             if respuesta.upper() == "S":
                 
-                in_answer = False
+                carpeta = "Database/{}".format(proyecto)
+                tabla = sql.SeleccionaTodasFilas(carpeta,"Excepciones")
+                problemas = False
+                for i in tabla:
+                    if i[1] == fecha:
+                        screen.SoundWrongAnswer()
+                        mensajeConPausa("Ya existe una excepción con esa fecha")
+                        problemas = True
+                        break
+                if problemas == False:
+                    in_answer = False
                 
         conexion,cursor = sql.creaAbreBd("Database/{}".format(proyecto))                   
         introducimos = 'INSERT INTO Excepciones (Fecha) VALUES (:Fecha)'
@@ -527,7 +561,8 @@ def menuProyectoAnadeExcepcion(proyecto,proyectoSinExt):
         sql.CierraBd(conexion)                                      
         
         listaTablaExcepciones(proyecto,proyectoSinExt,[300,2100,2345,420])               
-        
+                
+        screen.paper(400,1100,3,2)
         screen.textAlone(1555,579,"¿Quieres añadir otra excepción? (S/N): ")
         screen.updateScreen()
         respuesta = screen.pushAndCome()
@@ -583,7 +618,7 @@ def listaDatosTablasBase(proyecto,proyectoSinExt):
     for i in datos_a_pintar:
         
         screen.textAlone(1585,posicion,i)
-        posicion += 59
+        posicion += 49
     
     posicion = 220
     frase = 0
@@ -621,15 +656,15 @@ def listaDatosTablasBase(proyecto,proyectoSinExt):
                             i = a[1]
                             break
             
-        elif posicion == int((screen.height*220)/1440):
+        elif frase == 0:
             
             i = ""    
         screen.textAlone(1945,posicion,str(i))
-        if posicion == int((screen.height*220)/1440):
+        if frase == 0:
             
-            posicion += 59
+            posicion += 49
             
-        posicion += 59
+        posicion += 49
         frase += 1
         
     screen.updateScreen()  
@@ -648,6 +683,7 @@ def listaDatosTablaProceso(proyecto,proyectoSinExt,posiciones):
     try:
         
         tabla = sql.SeleccionaTodasFilas(carpeta,"Proceso")  
+        tabla = sorted(tabla, key=lambda x: datetime.strptime(x[1], "%d/%m/%y"))
                    
         if len(tabla) <= 3:
             
@@ -683,14 +719,14 @@ def listaDatosTablaProceso(proyecto,proyectoSinExt,posiciones):
             b = "Corrección"
             
         screen.textAlone(posiciones[2],posicion,f"{i[0]} - A {i[1]},  realicé")
-        screen.textAlone(posiciones[2],posicion,f"                             {i[2]} páginas de {b}")
-        posicion += 59  
+        screen.textAlone(posiciones[2],posicion,f"                                {i[2]} páginas de {b}")
+        posicion += 49  
         
     return  
             
 def menuProyectoTablasExcepciones(proyecto,proyectoSinExt):   
       
-    listaTablaExcepciones(proyecto,proyectoSinExt,[150,1200,1345,220])               
+    listaTablaExcepciones(proyecto,proyectoSinExt,[150,1200,1555,220])               
 
     return
 
@@ -700,21 +736,21 @@ def listaTablaExcepciones(proyecto,proyectoSinExt,posiciones):
     try:
         
         tabla = sql.SeleccionaTodasFilas(carpeta,"Excepciones") 
-                    
+        tabla = sorted(tabla, key=lambda x: datetime.strptime(x[1], "%d/%m/%y"))    
         if len(tabla) <= 3:
-            
+                
             valor = 5
-            
+                
         else:
-            
+                
             valor = len(tabla)+2
-            
-        screen.paper(posiciones[0],posiciones[1],valor,2)
-        screen.textAlone(posiciones[2],posiciones[3],"Excepciones de "+proyectoSinExt)
+                
+            screen.paper(posiciones[0],posiciones[1],valor,2)
+            screen.textAlone(posiciones[2],posiciones[3],"Excepciones de "+proyectoSinExt)
         
     except:
         
-        screen.paper(posiciones[0],posiciones[1],3,1)
+        screen.paper(posiciones[0],posiciones[1],3,2)
         screen.textAlone(posiciones[2],posiciones[3],"No hay excepciones para "+proyectoSinExt)
         tabla = []
         
@@ -722,7 +758,7 @@ def listaTablaExcepciones(proyecto,proyectoSinExt,posiciones):
     for i in tabla:
         
         screen.textAlone(posiciones[2],posicion,f"{i[0]} - El {i[1]} no se trabaja")
-        posicion += 59    
+        posicion += 49    
     
     return
 
@@ -904,7 +940,7 @@ def menuCreaProyecto():
     for i in datos_a_pintar:
         
         screen.textAlone(1555,posicion,i)
-        posicion += 59
+        posicion += 49
         
     screen.updateScreen()
     nombre = screen.AnswerChain([2000,346,600,40],9)
@@ -1033,7 +1069,7 @@ def creaCliente():
             for i in datos_a_pintar:
                 
                 screen.textAlone(1555,posicion,i)
-                posicion += 59
+                posicion += 49
                 
             screen.updateScreen()
             nombre = screen.AnswerChain([2000,346,600,40],9)
@@ -1056,7 +1092,9 @@ def creaCliente():
         sql.CierraBd(conexion) 
                                                                                      
         listado,carpeta = preparaListaClientes()                                            
-        listaClientes(listado)                                            
+        listaClientes(listado)  
+        
+        screen.paper(400,1100,3,2)                                         
         screen.textAlone(1555,1113,"¿Quieres crear otro cliente (S/N)?")
         screen.updateScreen()
         
@@ -1132,7 +1170,7 @@ def consultaCliente():
             screen.textAlone(1035,posicion,f"{titulos[orden]}")
             screen.textAlone(1275,posicion,f"       {i}")
             orden += 1
-            posicion += 59
+            posicion += 49
         
         in_function = False
         
@@ -1224,7 +1262,7 @@ def modificaCliente():
         for i in datos_a_pintar:
             
             screen.textAlone(1555,posicion,i)
-            posicion += 59
+            posicion += 49
             
         screen.updateScreen()
         
@@ -1376,7 +1414,7 @@ def creaTabla():
             for i in datos_a_pintar:
                 
                 screen.textAlone(1555,posicion,i)
-                posicion += 59
+                posicion += 49
                 
             screen.updateScreen()
             if nombre == "":
@@ -1415,6 +1453,8 @@ def creaTabla():
                                                                                     
         lineas = sql.SeleccionaTodasFilas(carpeta,nombre)
         listaLaTabla(lineas,nombre,[300,2100,2435,420])        
+
+        screen.paper(400,1100,3,2)
         screen.textAlone(1555,641,"¿Quieres crear otra linea (S/N)?")
         screen.updateScreen()
         
@@ -1489,7 +1529,7 @@ def listaLaTabla(filas,tabla,posiciones):
         screen.textAlone(posiciones[2],posicion,f"{i[0]} - De {i[1]:} a")
         screen.textAlone(posiciones[2],posicion,f"                     {i[2]:} palabras,")
         screen.textAlone(posiciones[2],posicion,f"                                         {i[3]:>5} €/palabra")
-        posicion += 59    
+        posicion += 49    
     
     return
 
@@ -1575,7 +1615,7 @@ def modificaTabla():
         for i in datos_a_pintar:
             
             screen.textAlone(1555,posicion,i)
-            posicion += 59
+            posicion += 49
             
         screen.updateScreen()
         

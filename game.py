@@ -15,7 +15,7 @@ class Game:
         
         screen_info = pygame.display.Info()
         self.width, self.height = screen_info.current_w, screen_info.current_h
-        
+        #self.width = 2000
         self.height = (self.width*1440)/3440
         
         self.screen = pygame.display.set_mode((self.width, self.height),)# pygame.FULLSCREEN)
@@ -220,6 +220,14 @@ class Game:
             DiasYaPasados = " --- "
         try:    
             DiasExentos                 = len(Excepciones)
+            for Excepcion in Excepciones:
+                FechaExcepcion = Excepcion[1]
+                try:
+                    FechaExcepcionSuma = datetime.strptime(FechaExcepcion, "%d/%m/%y")
+                except:
+                    FechaExcepcionSuma = " --- "
+                if FechaExcepcionSuma < FechaActualSuma:
+                    DiasExentos -= 1
         except:
             DiasExentos = " --- "
         try:
@@ -552,11 +560,11 @@ class Game:
     
     def AnswerChain(self,posicion, error = 0):
                 
-        posicion = [int((self.width * posicion[0]) / 3440), 
+        posiciones = [int((self.width * posicion[0]) / 3440), 
                     int((self.height * posicion[1]) / 1440),
                     int((self.width * posicion[2]) / 3440), 
                     int((self.height * posicion[3]) / 1440)]
-
+        posicion = posiciones
         ancho_texto = 0
         cotejo = True
         chain = ">"
