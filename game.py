@@ -15,7 +15,7 @@ class Game:
         
         screen_info = pygame.display.Info()
         self.width, self.height = screen_info.current_w, screen_info.current_h
-        #self.width = 2000
+        self.width = 2000
         self.height = (self.width*1440)/3440
         
         self.screen = pygame.display.set_mode((self.width, self.height),)# pygame.FULLSCREEN)

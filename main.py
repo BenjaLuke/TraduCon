@@ -943,7 +943,7 @@ def menuCreaProyecto():
         posicion += 49
         
     screen.updateScreen()
-    nombre = screen.AnswerChain([2000,346,600,40],9)
+    nombre = screen.AnswerChain([2000,323,600,40],9)
 
     codigos_de_error = [3,4,1,2,4,5,4,6,4,4,7,4,8,0]
     datos_necesarios = ["",""]
@@ -1002,29 +1002,29 @@ def menuCreaProyecto():
 def cuestionarioProyecto(errores,datos_necesarios):   
                                       
     tabla_usar,unidad_calculo,caracteres_holandesa,coste_holandesa,palabra_origen_destino,euros_pagina, = "", "","","","",""
-    estado = screen.AnswerChain([2000,464,600,40],errores[0])
+    estado = screen.AnswerChain([2000,421,600,40],errores[0])
     listado,carpeta = preparaListaClientes()                                            
     listaClientes(listado)                                            
-    cliente = screen.AnswerChain([2000,523,600,40],errores[1])
-    inicio_proyecto = screen.AnswerChain([2000,582,600,40],errores[2])   
-    fecha_entrega = screen.AnswerChain([2000,641,600,40],errores[3])
-    paginas_origen = screen.AnswerChain([2000,700,600,40],errores[4])
-    tipo_trabajo = screen.AnswerChain([2000,759,600,40],errores[5])
+    cliente = screen.AnswerChain([2000,470,600,40],errores[1])
+    inicio_proyecto = screen.AnswerChain([2000,519,600,40],errores[2])   
+    fecha_entrega = screen.AnswerChain([2000,568,600,40],errores[3])
+    paginas_origen = screen.AnswerChain([2000,617,600,40],errores[4])
+    tipo_trabajo = screen.AnswerChain([2000,666,600,40],errores[5])
     if tipo_trabajo == "C" or tipo_trabajo == "" and datos_necesarios[0] == "C":
         listado,carpeta = preparaListaTablas()
         listaTablas(listado)
-        tabla_usar = screen.AnswerChain([2000,818,600,40],errores[6]) 
+        tabla_usar = screen.AnswerChain([2000,715,600,40],errores[6]) 
     elif tipo_trabajo == "T" or tipo_trabajo == "" and datos_necesarios[0] == "T":
-        unidad_calculo = screen.AnswerChain([2000,877,600,40],errores[7]) 
+        unidad_calculo = screen.AnswerChain([2000,764,600,40],errores[7]) 
         if unidad_calculo == "C" or unidad_calculo == "" and datos_necesarios[1] == "C":
-            caracteres_holandesa = screen.AnswerChain([2000,936,600,40],errores[8]) 
-            coste_holandesa = screen.AnswerChain([2000,995,600,40],errores[9])
+            caracteres_holandesa = screen.AnswerChain([2000,813,600,40],errores[8]) 
+            coste_holandesa = screen.AnswerChain([2000,862,600,40],errores[9])
         elif unidad_calculo == "P" or unidad_calculo == "" and datos_necesarios[1] == "P":
-            palabra_origen_destino = screen.AnswerChain([2000,1054,600,40],errores[10]) 
+            palabra_origen_destino = screen.AnswerChain([2000,911,600,40],errores[10]) 
         else:
-            euros_pagina = screen.AnswerChain([2000,1113,600,40],errores[11]) 
-    tanto_ciento_correc = screen.AnswerChain([2000,1172,600,40],errores[12])
-    notas = screen.AnswerChain([2000,1231,600,40],errores[13])    
+            euros_pagina = screen.AnswerChain([2000,960,600,40],errores[11]) 
+    tanto_ciento_correc = screen.AnswerChain([2000,1009,600,40],errores[12])
+    notas = screen.AnswerChain([2000,1058,600,40],errores[13])    
       
     return estado,cliente,inicio_proyecto,fecha_entrega,paginas_origen,tipo_trabajo,tabla_usar,unidad_calculo,caracteres_holandesa,coste_holandesa,palabra_origen_destino,euros_pagina,tanto_ciento_correc,notas
             
