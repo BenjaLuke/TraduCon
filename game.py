@@ -15,7 +15,7 @@ class Game:
         
         screen_info = pygame.display.Info()
         self.width, self.height = screen_info.current_w, screen_info.current_h
-        self.width = 2000
+        # self.width = 2000
         self.height = (self.width*1440)/3440
         
         self.screen = pygame.display.set_mode((self.width, self.height),)# pygame.FULLSCREEN)
@@ -317,7 +317,7 @@ class Game:
             if Proceso[3] == "R": 
                 PaginasRevisadas += int(Proceso[2])        
         try:
-            PaginasTraduceAlDiaDesdeHoy = NumeroPaginasPendientes/DiasADedicarTrad
+            PaginasTraduceAlDiaDesdeHoy = NumeroPaginasPendientes/DiasReales
         except: 
             PaginasTraduceAlDiaDesdeHoy = " --- "
         try:
@@ -325,14 +325,29 @@ class Game:
         except:
             PaginasTraduceAlDiaDesdeHoy = " --- "
         try:
-            PaginasTraduceAlDiaDesdeMan = NumeroPaginasPendientes/(DiasADedicarTrad-1)
+            PaginasRevisaAlDiaDesdeHoy = NumeroPaginasPorRevisar/DiasReales
+        except:
+            PaginasRevisaAlDiaDesdeHoy = " --- "
+        try:
+            PaginasRevisaAlDiaDesdeHoy = mates.redondea(PaginasRevisaAlDiaDesdeHoy,0)
+        except:
+            PaginasRevisaAlDiaDesdeHoy = " --- "         
+        try:
+            PaginasTraduceAlDiaDesdeMan = NumeroPaginasPendientes/(DiasReales-1)
         except:
             PaginasTraduceAlDiaDesdeMan = " --- "
         try:    
             PaginasTraduceAlDiaDesdeMan = mates.redondea(PaginasTraduceAlDiaDesdeMan,0)
         except:
             PaginasTraduceAlDiaDesdeMan = " --- "
-            
+        try:
+            PaginasRevisaAlDiaDesdeMan = NumeroPaginasPorRevisar/(DiasReales-1)
+        except:
+            PaginasRevisaAlDiaDesdeMan = " --- "  
+        try:
+            PaginasRevisaAlDiaDesdeMan = mates.redondea(PaginasRevisaAlDiaDesdeMan,0)
+        except:
+            PaginasRevisaAlDiaDesdeMan = " --- "  
         tituloLargo = ("Proyecto de "+TipoDeConteo+" "+proyectoSinExt)
         todasLasFechas = "Inicio: "+FechaInicioProyecto+" - Hoy: "+ FechaActual +" - Entrega: "+FechaEntrega
         
@@ -369,11 +384,11 @@ class Game:
         listaDeDatos.append(["Reales: ",900,625,self.font_2])
         listaDeDatos.append([str(DiasReales),585,625,self.font_2])
         if Datos[0][7] == "T":
-            listaDeDatos.append(["Dedicar a Trad.:",900,575,self.font_2])
+            listaDeDatos.append(["Dedic. T. desde hoy:",900,575,self.font_2])
         else:
-            listaDeDatos.append(["Dedicar a Corr.:",900,575,self.font_2])
+            listaDeDatos.append(["Dedic. C. desde hoy:",900,575,self.font_2])
         listaDeDatos.append([str(DiasADedicarTrad),585,575,self.font_2])
-        listaDeDatos.append(["Dedicar a Rev.:",900,525,self.font_2])
+        listaDeDatos.append(["Dedic. R. desde hoy:",900,525,self.font_2])
         listaDeDatos.append([str(DiasADedicarRev),585,525,self.font_2])
         listaDeDatos.append(["Tradujiste:",900,475,self.font_2])
         listaDeDatos.append([str(DiasYaDedicadosTraduccion),585,475,self.font_2])
@@ -416,8 +431,8 @@ class Game:
         except:
             listaDeDatos.append([" --- ",190,575,self.font_2])
             
-        listaDeDatos.append([" Páginas por traducir a diario desde hoy: "+str(PaginasTraduceAlDiaDesdeHoy),1200,250,self.font_3])
-        listaDeDatos.append([" Páginas por traducir a diario desde mañana: "+str(PaginasTraduceAlDiaDesdeMan),1200,180,self.font_3])
+        listaDeDatos.append([" Pág. trad/rev a partir de hoy: "+str(PaginasTraduceAlDiaDesdeHoy)+" / "+str(PaginasRevisaAlDiaDesdeHoy),1200,250,self.font_3])
+        listaDeDatos.append([" Pág, trad/rev a partir mañana: "+str(PaginasTraduceAlDiaDesdeMan)+" / "+str(PaginasRevisaAlDiaDesdeMan) ,1200,180,self.font_3])
         
         return listaDeDatos
         
