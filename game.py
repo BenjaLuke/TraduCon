@@ -655,7 +655,16 @@ class Game:
                 chain = ">"
 
             chain = str(chain)
-            self.screen.fill((247, 241, 238), (posicion[0], posicion[1] - int((self.height * 19) / 1440), posicion[2], posicion[3]))
+            
+            # Bucle que recorre todas las posiciones desde posicion[1] hasta posicion[1]+posicion[3]
+            for i in range(posicion[1], posicion[1]+posicion[3]):
+                # Descubre el color del pixel de la posición posicion[1]-1,i
+                color = self.screen.get_at((posicion[0]-1, i- int((self.height * 19)/1440)))
+                # Pinta una linea tan larga como posicion[2] en la posición posicion[1],i, de color "color"
+                pygame.draw.line(self.screen, color, (posicion[0], i- int((self.height * 19)/1440)), (posicion[0]+posicion[2], 1-int((self.height * 19)/1440)+i))
+                
+            
+            # self.screen.fill((247, 241, 238), (posicion[0], posicion[1] - int((self.height * 19) / 1440), posicion[2], posicion[3]))
             texto_escribe = self.font_2.render(chain, True, (0, 0, 200))
             text_rect = texto_escribe.get_rect(left=posicion[0], centery=posicion[1])
             self.screen.blit(texto_escribe, text_rect)

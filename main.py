@@ -172,7 +172,7 @@ def menuProyectoCorrigeBase(proyecto,proyectoSinExt):
                       f"(T)raduc. (C)orrec. {listadoExtra[7]}", f"Tabla Usar: {listadoExtra[8]}",
                       f"Calc.: (P)alab.(C)aract.p(A)g. {listadoExtra[5]}", f"Caracteres Holandesa: {listadoExtra[9]}",
                       f"Coste de la Holandesa: {listadoExtra[10]}", f"Palab. (O)rigen (D)estino: {listadoExtra[11]}",
-                      f"Euros Página: {listadoExtra[12]}", f"% Correc: {listadoExtra[13]}",
+                      f"Euros Página: {listadoExtra[12]}", f"% Revis: {listadoExtra[13]}",
                       f"Notas: {listadoExtra[14]}"]
         
     mensajeConPausa("Introduce datos (en blanco, mantiene antiguo)")

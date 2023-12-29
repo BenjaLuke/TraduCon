@@ -7,6 +7,12 @@ Utilizo POO para toda la parte gráfica, pero funciones para el resto. Separo ca
 
 Liándome la manta a la cabeza, decido hacer una aplicación con una librería para videojuegos (pygame). La experiencia es satisfactoria y muy enriquecedora.
 
+
+versión 2.18
+
+- Disimulado fondo al escribir una cadena
+- Algún fallo de texto
+
 versión 2.17
 
 - Añadida nueva información sobre la revisión a la gráfica global
