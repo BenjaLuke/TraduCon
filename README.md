@@ -8,6 +8,12 @@ Utilizo POO para toda la parte gráfica, pero funciones para el resto. Separo ca
 Liándome la manta a la cabeza, decido hacer una aplicación con una librería para videojuegos (pygame). La experiencia es satisfactoria y muy enriquecedora.
 
 
+versión 2.19
+
+- Papel super grande ahora tiene agujeros normales
+- Recolocar todos textos para aprovechar el espacio en el papel
+- Preguntas de si quieres repetir (S/N) se borra el texto tras la respuesta
+
 versión 2.18
 
 - Disimulado fondo al escribir una cadena

@@ -34,18 +34,21 @@ class Game:
         self.paper_sup = pygame.image.load("EXTRAS/hoja_superior.png")
         self.paper_mid = pygame.image.load("EXTRAS/hoja_media.png")
         self.paper_down = pygame.image.load("EXTRAS/hoja_inferior.png")
-        
+        self.paper_sup_2 = pygame.image.load("EXTRAS/hoja_superior_2.png")
+        self.paper_mid_2 = pygame.image.load("EXTRAS/hoja_media_2.png")
+        self.paper_down_2 = pygame.image.load("EXTRAS/hoja_inferior_2.png")
+         
         self.paper_sup = pygame.transform.scale(self.paper_sup, (int((self.width*664)/3440), int((self.height*116)/1440)))
         self.paper_mid = pygame.transform.scale(self.paper_mid, (int((self.width*664)/3440), int((self.height*71)/1440)))
         self.paper_down = pygame.transform.scale(self.paper_down, (int((self.width*664)/3440), int((self.height*145)/1440)))
         
-        self.paper_sup_big = pygame.transform.scale(self.paper_sup, (int((self.width*800)/3440), int((self.height*116)/1440)))
-        self.paper_mid_big = pygame.transform.scale(self.paper_mid, (int((self.width*800)/3440), int((self.height*71)/1440)))
-        self.paper_down_big = pygame.transform.scale(self.paper_down, (int((self.width*800)/3440), int((self.height*145)/1440)))
+        #self.paper_sup_big = pygame.transform.scale(self.paper_sup, (int((self.width*800)/3440), int((self.height*116)/1440)))
+        #self.paper_mid_big = pygame.transform.scale(self.paper_mid, (int((self.width*800)/3440), int((self.height*71)/1440)))
+        #self.paper_down_big = pygame.transform.scale(self.paper_down, (int((self.width*800)/3440), int((self.height*145)/1440)))
         
-        self.paper_sup_super_big = pygame.transform.scale(self.paper_sup, (int((self.width*1500)/3440), int((self.height*116)/1440)))
-        self.paper_mid_super_big = pygame.transform.scale(self.paper_mid, (int((self.width*1500)/3440), int((self.height*71)/1440)))
-        self.paper_down_super_big = pygame.transform.scale(self.paper_down, (int((self.width*1500)/3440), int((self.height*145)/1440)))
+        self.paper_sup_super_big = pygame.transform.scale(self.paper_sup_2, (int((self.width*1500)/3440), int((self.height*116)/1440)))
+        self.paper_mid_super_big = pygame.transform.scale(self.paper_mid_2, (int((self.width*1500)/3440), int((self.height*71)/1440)))
+        self.paper_down_super_big = pygame.transform.scale(self.paper_down_2, (int((self.width*1500)/3440), int((self.height*145)/1440)))
         
         self.paper_graph = pygame.image.load("EXTRAS/hoja_de_grafica.png") 
         self.paper_graph = pygame.transform.scale(self.paper_graph, (int((self.width*1331)/3440), int((self.height*1400)/1440)))  
