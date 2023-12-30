@@ -13,6 +13,7 @@ versión 2.19
 - Papel super grande ahora tiene agujeros normales
 - Recolocar todos textos para aprovechar el espacio en el papel
 - Preguntas de si quieres repetir (S/N) se borra el texto tras la respuesta
+- Arreglados agujeros del papel de gráficas
 
 versión 2.18
 
