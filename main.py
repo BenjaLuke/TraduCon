@@ -14,8 +14,8 @@ def comprobarExistenciaCarpeta():
     if not os.path.exists("Database") or not os.path.isdir("Database"):     
 
         screen.SoundWrongAnswer     ()
-        mensajeConPausa             ("Error. No existe la carpeta contenedora adecuada")
-        mensajeConPausa             ("Se creará la carpeta contenedora adecuada")
+        mensajeConPausa             ("Error. No existe\nla carpeta contenedora adecuada")
+        mensajeConPausa             ("Se creará\nla carpeta contenedora adecuada")
         os.mkdir                    ("Database")
         mensajeConPausa             ("Carpeta creada con éxito")
                  
@@ -31,7 +31,7 @@ def menuInicial():
                     "3 - Clientes","4 - Tablas de corrección"])
         screen.updateScreen()
         
-        destino = screen.pushAndCome()
+        destino = screen.pushAndCome(options = 5)
         if destino == "1":      EscogeTipoProyecto()
         elif destino == "2":    menuCreaProyecto()
         elif destino == "3":    menuClientes()
@@ -46,12 +46,12 @@ def EscogeTipoProyecto():
     in_function = True
     while in_function:
 
-        screen.paper(100,200,9)
-        screen.text(200,400,["Abrir proyecto","1 - Activo","2 - Inactivo","3 - Cerrado"])
+        screen.paper(50,100,9)
+        screen.text(150,300,["Abrir proyecto","1 - Activo","2 - Inactivo","3 - Cerrado"])
         screen.updateScreen()
             
         tipo_proyecto = ""
-        destino = screen.pushAndCome()
+        destino = screen.pushAndCome(options = 4)
         if destino == "1":      tipo_proyecto = ".dba"
         elif destino == "2":    tipo_proyecto = ".dbi"
         elif destino == "3":    tipo_proyecto = ".dbc"
@@ -70,44 +70,74 @@ def abrirProyecto(tipo_proyecto):
             datos = []                                                                          
             for dato in DiccionarioFiles:                                                       
                 datos.append(dato.split(".")[0])                                                
-            opciones_de_menu = [f"Abrir proyecto {tipo_proyecto}"]
+            extensión = [".dba",".dbi",".dbc"]
+            palabras = ["Activo","Inactivo","Cerrado"]
+            for i in range(3):
+                if tipo_proyecto == extensión[i]:
+                    final = palabras[i]
+                    break
 
-            numeracion = 1
-            for i in datos:
-
-                i = f"{numeracion} - {i}"
-                opciones_de_menu.append(i)
-                numeracion += 1
-
-            if cantidad == 0:
-
-                screen.SoundWrongAnswer()
-                mensajeConPausa(f"No existen proyectos {tipo_proyecto}")
-                in_function = False
-                break
+            mensajeConPausa("Elige opción\nCursores mueve lista",
+                    False,False)
             
-            screen.paper(300,600,cantidad+6)
-            screen.text(400,800,opciones_de_menu)
-            screen.updateScreen()
+            posicion = 0
+            numeracion = 1
+            in_rotative = True
+            while in_rotative:
+                screen.paper(50,100,12,False)
+                data = []
+                lista_corta = datos[posicion:posicion+7]
+                for i in lista_corta:
+                    if len(i) > 19:
+                        i = i[:19]
+                        i = i + "..."
+                    data.append(i)
+                opciones_de_menu = [f"Abrir proyecto {final}"]
+                for i in data:
 
-            opciones = [str(i) for i in range(0,cantidad+1)]
-            need_answer = True
-            while need_answer:
-                
-                opcion = screen.pushAndCome()
-                if opcion in opciones:
-                    need_answer = False
+                    i = f"{numeracion} - {i}"
+                    opciones_de_menu.append(i)
+                    numeracion += 1
 
+                if cantidad == 0:
+
+                    screen.SoundWrongAnswer()
+                    mensajeConPausa(f"No existen proyectos\n{final}")
+                    in_function = False
+                    break                
+                screen.text(150,300,opciones_de_menu)
+                screen.updateScreen()
+                time.sleep(0.1)
+                opciones = [str(i) for i in range(0,cantidad+1)]
+                    
+                opcion = screen.pushAndCome(suma=posicion,options = 8)
+                if opcion == "98":
+                    if posicion >0:
+                        posicion -=1
+                    numeracion = posicion+1
+                elif opcion == "99":
+                    if posicion < len(datos) - 7:
+                        posicion += 1
+                    numeracion = posicion+1
+                elif opcion in opciones:
+                    in_rotative = False
+                else:
+                    numeracion = posicion+1
+                            
             opcion = int(opcion)      
             if opcion == 0:  
-                
+                    
                 in_function = False                                                  
-            
-            else:                                                                                   
                 
+            else:                                                                                   
+                    
                 Proyecto = DiccionarioFiles[opcion-1]                                         
-                proyectoSinExt = Proyecto.split(".")[0] 
-                in_function = False # Al volver desde CRUD, hay que volver a escoter tipo de proyecto                                  
+                proyectoSinExt = Proyecto.split(".")[0]
+                if len(proyectoSinExt) >22:
+                    proyectoSinExt = proyectoSinExt[:22]
+                    proyectoSinExt = proyectoSinExt + "..."
+                        
+                in_function = False                                  
                 menuProyectoCRUD(Proyecto,proyectoSinExt)                                           
         
         return
@@ -119,13 +149,13 @@ def menuProyectoCRUD(proyecto,proyectoSinExt):
         
         exit_project = False
                        
-        screen.paper(150,300,11)
-        screen.text(250,500,[f"'{proyectoSinExt}'",
+        screen.paper(50,100,11)
+        screen.text(150,300,[f"'{proyectoSinExt}'",
                     "1 - Corrige un dato","2 - Añade un dato","3 - Elimina dato/proyecto",
                     "4 - Gráficas","5 - Consultar datos"])
         screen.updateScreen()
         
-        destino = screen.pushAndCome()
+        destino = screen.pushAndCome(options = 6)
         if destino == "1":      menuProyectoCorrige(proyecto,proyectoSinExt)
         elif destino == "2":    menuProyectoAnade(proyecto,proyectoSinExt)
         elif destino == "3":    exit_project = menuProyectoElimina(proyecto,proyectoSinExt)
@@ -142,12 +172,12 @@ def menuProyectoCorrige(proyecto,proyectoSinExt):
     
     in_function = True
     while in_function:
-        screen.paper(200,400,8)
-        screen.text(300,600,[f"Corrige:  {proyectoSinExt}",
+        screen.paper(50,100,8)
+        screen.text(150,300,[f"Corrige:\n{proyectoSinExt}",
                         "1 - Datos base","2 - Datos proceso","3 - Excepciones"])
         screen.updateScreen()
         
-        destino = screen.pushAndCome()
+        destino = screen.pushAndCome(options = 4)
         if destino == "1":      menuProyectoCorrigeBase(proyecto,proyectoSinExt)
         elif destino == "2":    menuProyectoCorrigeProceso(proyecto,proyectoSinExt)
         elif destino == "3":    menuProyectoCorrigeExcepciones(proyecto,proyectoSinExt)
@@ -175,32 +205,36 @@ def menuProyectoCorrigeBase(proyecto,proyectoSinExt):
                       f"Euros Página: {listadoExtra[12]}", f"% Revis: {listadoExtra[13]}",
                       f"Notas: {listadoExtra[14]}"]
         
-    mensajeConPausa("Introduce datos (en blanco, mantiene antiguo)")
+    mensajeConPausa("Introduce datos\nEn blanco mantiene valor\nESC para anular",
+                    False,False)                                                        # Muestra mensaje quitando la pausa y sin borrar
     
-    screen.paper(209,1190,16,2)    
-    posicion = 284
-    for i in datos_a_pintar:
+    screen.paper(50,700,16,2)                                                           # Pinta el papel 
+    posicion = 150                                                                      # Posición de inicio
+    for i in datos_a_pintar:                                                            # Pinta los datos a modificar
         
-        screen.textAlone(1400,posicion,i)
-        posicion += 49
+        screen.textAlone(900,posicion,i)                                                # Pinta el dato
+        posicion += 49                                                                   # Incrementa la posición
         
-    
-    datos_necesarios = [listadoExtra[6],listadoExtra[4]]
-    codigos_de_error = [15,4,14,2,4,5,4,6,4,4,7,4,8,0]
-    datos_a_recuperar_tupla = cuestionarioProyecto(codigos_de_error,datos_necesarios)
+    datos_necesarios = [listadoExtra[6],listadoExtra[4]]                                # Recoge datos necesarios para la corrección
+    codigos_de_error = [15,4,14,2,4,5,4,6,4,4,7,4,8,0]                                  # Da los codigos de posible error que debe seguir
+    datos_a_recuperar_tupla = cuestionarioProyecto(codigos_de_error,datos_necesarios)   # Recoge los datos del cuestionario
+    if "acción anulada" in datos_a_recuperar_tupla:                                     # Si se recibe esta cadena anulamos la acción
+        return                                                                          # y salimos de la función
     datos_a_recuperar = list(datos_a_recuperar_tupla)
     listadoExtra = [listadoExtra[1],listadoExtra[2],listadoExtra[3],
                     listadoExtra[4],listadoExtra[6],listadoExtra[7],
                     listadoExtra[8],listadoExtra[5],listadoExtra[9],
                     listadoExtra[10],listadoExtra[11],listadoExtra[12],
                     listadoExtra[13],listadoExtra[14]]
-    
     for i in range(len(datos_a_recuperar)-1):
     
         if datos_a_recuperar[i] == "":
     
             datos_a_recuperar[i] = listadoExtra[i]
-    datos_a_recuperar[13] = listadoExtra[13] + " - " + datos_a_recuperar[13]
+    if datos_a_recuperar[13] != "":
+        datos_a_recuperar[13] = listadoExtra[13] + "\n" + datos_a_recuperar[13]
+    else:
+        datos_a_recuperar[13] = listadoExtra[13]
     sentencia = """UPDATE Datos SET Estado = ?, Cliente = ?, IncioProyecto = ?, 
                                     FechaEntrega = ?, UnidadCalculo = ?, PáginasOrigen = ?, 
                                     TipoTrabajo = ?, TablaUsar = ?, CaracteresHolandesa = ?, 
@@ -256,29 +290,34 @@ def menuProyectoCorrigeProceso(proyecto,proyectoSinExt):
     while in_function:
         
         id_seleccionado, tabla, carpeta, in_function = PintaListaCorrecta("Proceso",proyecto,proyectoSinExt,listaDatosTablaProceso)
-        if in_function == False: break
+        if in_function == False: 
+            break
        
         conexion,cursor = sql.creaAbreBd(carpeta)                                                   
         
         fila, in_function = abreIdSeleccionado(tabla,id_seleccionado)
-        if in_function == False: break
+        if in_function == False: 
+            break
                 
         datos_a_pintar = [f"Modifica proceso de {proyectoSinExt} fila {id_seleccionado}","",
                         f"Fecha: {fila[1]}", f"Páginas: {fila[2]}",
                         f"Tipo (T)rad./correc (R)evisión) {fila[3]}:"]
         
-        mensajeConPausa("Introduce datos (en blanco, mantiene antiguo)")
+        mensajeConPausa("Introduce datos\nEn blanco mantiene valor\nESC para anular",
+                    False,False) 
         
-        screen.paper(150,1200,6,2)
-        posicion = 225
+        screen.paper(50,700,6,2)
+        posicion = 150
         for i in datos_a_pintar:
             
-            screen.textAlone(1400,posicion,i)
-            posicion += 49
+            screen.textAlone(900,posicion,i)
+            posicion += 49 
             
         screen.updateScreen()
         
         datos_a_recuperar_tupla = cuestionarioProcesos([14,4,12])
+        if "acción anulada" in datos_a_recuperar_tupla:
+            return
         datos_a_recuperar = list(datos_a_recuperar_tupla) 
         
         for i in range(len(datos_a_recuperar)):
@@ -293,17 +332,14 @@ def menuProyectoCorrigeProceso(proyecto,proyectoSinExt):
             sql.Modificar(cursor,sentencia,parametros)                      
             sql.CierraBd(conexion)                                          
         
-            listaDatosTablaProceso(proyecto,proyectoSinExt,[150,1050,1260,220])             
-            mensajeConPausa("Datos modificados con éxito")      
+            listaDatosTablaProceso(proyecto,proyectoSinExt,[550,700,900,650],12,False)             
+            mensajeConPausa("Modificación exitosa")      
                
         except:
             
             screen.SoundWrongAnswer()
             mensajeConPausa("Error al modificar el proceso") 
                
-        screen.updateScreen()
-        time.sleep(2)
-        screen.paper(1000,400,3,2)   
         in_function = False
         
     return   
@@ -319,21 +355,25 @@ def menuProyectoCorrigeExcepciones(proyecto,proyectoSinExt):
         conexion,cursor = sql.creaAbreBd(carpeta)                                                   
         
         fila, in_function = abreIdSeleccionado(tabla,id_seleccionado)
-        if in_function == False: break
+        if in_function == False: 
+            break
         
         datos_a_pintar = [f"Modifica excepción de {proyectoSinExt} fila {id_seleccionado}","",
                             f"Fecha: {fila[1]}"]
         
-        mensajeConPausa("Introduce datos (en blanco, mantiene antiguo)")
-        screen.paper(150,1200,6,2)
-        posicion = 225
+        mensajeConPausa("Introduce datos\nEn blanco mantiene valor\nESC para anular",
+                    False,False) 
+        screen.paper(50,700,6,2)
+        posicion = 150
         for i in datos_a_pintar:
             
-            screen.textAlone(1400,posicion,i)
-            posicion += 49
+            screen.textAlone(900,posicion,i)
+            posicion += 49 
             
         screen.updateScreen()
         fecha = cuestionarioExcepciones()
+        if "acción anulada" in fecha:
+            return
         datos_a_recuperar = [fecha]
         for i in range(len(datos_a_recuperar)):
             
@@ -346,8 +386,8 @@ def menuProyectoCorrigeExcepciones(proyecto,proyectoSinExt):
             sql.Modificar(cursor,sentencia,parametros)                      
             sql.CierraBd(conexion)                                          
         
-            listaTablaExcepciones(proyecto,proyectoSinExt,[150,1050,1165,220])               
-            mensajeConPausa("Datos modificados con éxito")     
+            listaTablaExcepciones(proyecto,proyectoSinExt,[550,700,900,650],12,False)               
+            mensajeConPausa("Modificación exitosa")     
                 
         except:
             
@@ -390,20 +430,12 @@ def PintaListaCorrecta(nombre_carpeta,proyecto,proyectoSinExt,listaAMostrar):
     tabla = []
     carpeta = "Database/{}".format(proyecto)
     try:
-        
         tabla = sql.SeleccionaTodasFilas(carpeta,nombre_carpeta)
-        listaAMostrar(proyecto,proyectoSinExt,[150,1050,1410,220])
-        
+        id_seleccionado = listaAMostrar(proyecto,proyectoSinExt,[50,700,900,150])
     except:
-        
         screen.SoundWrongAnswer()
         mensajeConPausa("Lista vacía")
         return "",tabla, carpeta, False
-    
-    screen.paper(1000,400,3,2)
-    screen.textAlone(450,1100,f"Elige ID:")
-    screen.updateScreen()
-    id_seleccionado = screen.AnswerChain([1400,1100,200,40],4)
     
     return id_seleccionado, tabla, carpeta, True 
   
@@ -412,13 +444,13 @@ def menuProyectoAnade(proyecto,proyectoSinExt):
     in_function = True
     while in_function:
         
-        screen.paper(250,500,8)
-        screen.text(350,700,[f"Añade a '{proyectoSinExt}'",
-                    "1 - Datos proceso","2 - Excepciones"])
+        screen.paper(50,100,8)
+        screen.text(150,300,[f"Añade un dato a\n'{proyectoSinExt}'",
+                    "1 - Procesos","2 - Excepciones"])
         
         screen.updateScreen()
         
-        destino = screen.pushAndCome()
+        destino = screen.pushAndCome(options = 3)
         if destino == "1":      menuProyectoAnadeProceso(proyecto,proyectoSinExt)
         elif destino == "2":    menuProyectoAnadeExcepcion(proyecto,proyectoSinExt)
         elif destino == "0":    in_function = False
@@ -428,7 +460,8 @@ def menuProyectoAnade(proyecto,proyectoSinExt):
 
 def menuProyectoAnadeProceso(proyecto,proyectoSinExt):          
     
-    listaDatosTablaProceso(proyecto,proyectoSinExt,[300,2100,2300,420])             
+    listaDatosTablaProceso(proyecto,proyectoSinExt,[550,700,900,650],7,True)             
+    mensajeConPausa("ESC para anular",False,False)
     
     conexion,cursor = sql.creaAbreBd("Database/{}".format(proyecto))                                                                   
     insercionDatos = f'''CREATE TABLE IF NOT EXISTS Proceso(ID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -445,45 +478,49 @@ def menuProyectoAnadeProceso(proyecto,proyectoSinExt):
         in_answer = True
         while in_answer:
             
-            screen.paper(150,1200,6,2)
-            posicion = 225
+            screen.paper(50,700,6,2)
+            posicion = 150
             for i in datos_a_pintar:
                 
-                screen.textAlone(1400,posicion,i)
-                posicion += 49
+                screen.textAlone(900,posicion,i)
+                posicion += 49 
                 
             screen.updateScreen()
             fecha,paginas,tipo = cuestionarioProcesos([1,4,12])
-            screen.textAlone(1400,520,"Son correctos los datos introducidos? (S/N): ")
-            screen.updateScreen()
-            
-            respuesta = screen.pushAndCome()
-            if respuesta.upper() == "S":
-                # Revisa las excepciones y si la fecha del proceso introducido coincide con alguna excepción, se elimina esa excepción
-                carpeta = "Database/{}".format(proyecto)
-                tabla = sql.SeleccionaTodasFilas(carpeta,"Excepciones")
-                for i in tabla:
-                    if i[1] == fecha:
-                        conexion,cursor = sql.creaAbreBd(carpeta)
-                        sentencia = "DELETE FROM Excepciones WHERE Fecha = ?"
-                        parametros = (fecha,)
-                        sql.Modificar(cursor,sentencia,parametros)
-                        sql.CierraBd(conexion)
-                        break
-                # Revisa los procesos y si la fecha del proceso introducido coincide con algún proceso  y el tipo de trabajo es el mismo, se suman los días
-                tabla = sql.SeleccionaTodasFilas(carpeta,"Proceso")
-                debemos_grabar = True
-                for i in tabla:
-                    if i[1] == fecha and i[3] == tipo:
-                        conexion,cursor = sql.creaAbreBd(carpeta)
-                        sentencia = "UPDATE Proceso SET Paginas = ? WHERE Fecha = ? AND Tipo = ?"
-                        parametros = (str(int(paginas)+int(i[2])),fecha,tipo)
-                        sql.Modificar(cursor,sentencia,parametros)
-                        sql.CierraBd(conexion)
-                        debemos_grabar = False
-                        break               
-                in_answer = False
-        
+            if "acción anulada" in fecha:
+                return
+            mensajeConPausa("¿Datos correctos? (S/N)",False,False)
+            stay = True
+            while stay: 
+                respuesta = screen.pushAndCome(options = 0)
+                if respuesta.upper() == "S":
+                    carpeta = "Database/{}".format(proyecto)
+                    tabla = sql.SeleccionaTodasFilas(carpeta,"Excepciones")
+                    for i in tabla:
+                        if i[1] == fecha:
+                            conexion,cursor = sql.creaAbreBd(carpeta)
+                            sentencia = "DELETE FROM Excepciones WHERE Fecha = ?"
+                            parametros = (fecha,)
+                            sql.Modificar(cursor,sentencia,parametros)
+                            sql.CierraBd(conexion)
+                            break
+                    tabla = sql.SeleccionaTodasFilas(carpeta,"Proceso")
+                    debemos_grabar = True
+                    for i in tabla:
+                        if i[1] == fecha and i[3] == tipo:
+                            conexion,cursor = sql.creaAbreBd(carpeta)
+                            sentencia = "UPDATE Proceso SET Paginas = ? WHERE Fecha = ? AND Tipo = ?"
+                            parametros = (str(int(paginas)+int(i[2])),fecha,tipo)
+                            sql.Modificar(cursor,sentencia,parametros)
+                            sql.CierraBd(conexion)
+                            debemos_grabar = False
+                            break               
+                    in_answer = False
+                    mensajeConPausa("Datos añadidos")
+                    stay = False
+                elif respuesta.upper() == "N":
+                    mensajeConPausa("Repitamos")
+                    stay = False
         if debemos_grabar == True:
             conexion,cursor = sql.creaAbreBd("Database/{}".format(proyecto))                   
             introducimos = 'INSERT INTO Proceso (Fecha,Paginas,Tipo) VALUES (:Fecha,:Paginas,:Tipo)'
@@ -491,30 +528,37 @@ def menuProyectoAnadeProceso(proyecto,proyectoSinExt):
             sql.anadeFila(cursor,introducimos,parametros,conexion)
             sql.CierraBd(conexion)                                      
         
-        listaDatosTablaProceso(proyecto,proyectoSinExt,[300,2100,2300,420])             
+        listaDatosTablaProceso(proyecto,proyectoSinExt,[550,700,900,650],7,True)             
         
-        screen.paper(400,1100,3,2)
-        screen.textAlone(1400,579,"¿Quieres añadir otro proceso? (S/N): ")
-        screen.updateScreen()
-        respuesta = screen.pushAndCome()
-        if respuesta.upper() == "N":
-            screen.paper(400,1100,3,2)
-            in_function = False  
-            mensajeConPausa("Proceso(s) añadido(s) con éxito")
-                  
+        mensajeConPausa("¿proceso? (S/N)",False,False)
+        stay = True
+        while stay:
+            respuesta = screen.pushAndCome(options = 0)
+            if respuesta.upper() == "N":
+                in_function = False
+                stay = False  
+            elif respuesta.upper() == "S":
+                stay = False         
     return                                          
 
-def cuestionarioProcesos(errores):
-    
-    fecha =     screen.AnswerChain([2080,323,500,40], errores[0])
-    paginas =   screen.AnswerChain([2080,372,500,40], errores[1])
-    tipo =      screen.AnswerChain([2080,421,500,40], errores[2])
-    
-    return fecha,paginas,tipo
+def cuestionarioProcesos(errores):                                              # Activa el cuestionario para los procesos
+    fecha,paginas,tipo = "","",""                                               # Inicializa las variables
+    YTexto = [245,294,343]                                                      # Posiciones de los textos
+    variablesPasar = ["","",""]                                                 # Inicializa las variables a pasar
+    i=0                                                                         # Inicializa el contador
+    while i<3:                                                                  # Bucle para recoger los datos
+        data = screen.AnswerChain([1430,YTexto[i],500,40],errores[i])           # Recoge los datos
+        anular = CotejaAnulacion(data)                                          # Comprueba si se anula
+        if anular: return (data,)*3                                             # Si se anula, devuelve los datos
+        variablesPasar[i] = data                                                # Si no se anula, guarda los datos
+        i+=1                                                                    # Incrementa el contador
+    fecha,paginas,tipo = variablesPasar                                         # Asigna los datos a las variables
+    return fecha,paginas,tipo                                                   # Devuelve los datos
 
 def menuProyectoAnadeExcepcion(proyecto,proyectoSinExt):
-            
-    listaTablaExcepciones(proyecto,proyectoSinExt,[300,2100,2195,420])               
+    
+    listaTablaExcepciones(proyecto,proyectoSinExt,[550,700,900,650],7,True)               
+    mensajeConPausa("ESC para anular",False,False)        
     
     conexion,cursor = sql.creaAbreBd("Database/{}".format(proyecto))                                                                   
     insercionDatos = f'''CREATE TABLE IF NOT EXISTS Excepciones(ID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -528,55 +572,63 @@ def menuProyectoAnadeExcepcion(proyecto,proyectoSinExt):
         in_answer = True
         while in_answer:
             
-            screen.paper(150,1200,6,2)
-            posicion = 225
+            screen.paper(50,700,6,2)
+            posicion = 150
             for i in datos_a_pintar:
                 
-                screen.textAlone(1400,posicion,i)
-                posicion += 49
+                screen.textAlone(900,posicion,i)
+                posicion += 49 
                 
             screen.updateScreen()
             fecha = cuestionarioExcepciones()
-            screen.textAlone(1400,520,"Son correctos los datos introducidos? (S/N): ")
-            screen.updateScreen()
-            respuesta = screen.pushAndCome()
-            if respuesta.upper() == "S":
-                
-                carpeta = "Database/{}".format(proyecto)
-                tabla = sql.SeleccionaTodasFilas(carpeta,"Excepciones")
-                problemas = False
-                for i in tabla:
-                    if i[1] == fecha:
-                        screen.SoundWrongAnswer()
-                        mensajeConPausa("Ya existe una excepción con esa fecha")
-                        problemas = True
-                        break
-                if problemas == False:
-                    in_answer = False
-                
+            if "acción anulada" in fecha:
+                return
+            stay = True
+            while stay:
+                mensajeConPausa("¿Datos correctos? (S/N)",False,False)
+                respuesta = screen.pushAndCome(options = 0)
+                if respuesta.upper() == "S":
+                    
+                    carpeta = "Database/{}".format(proyecto)
+                    tabla = sql.SeleccionaTodasFilas(carpeta,"Excepciones")
+                    problemas = False
+                    for i in tabla:
+                        if i[1] == fecha:
+                            screen.SoundWrongAnswer()
+                            mensajeConPausa("Ya existe una excepción\ncon esa fecha")
+                            problemas = True
+                            break
+                    if problemas == False:
+                        in_answer = False
+                        stay = False
+                elif respuesta.upper() == "N":
+                    mensajeConPausa("Repitamos")
+                    stay = False
         conexion,cursor = sql.creaAbreBd("Database/{}".format(proyecto))                   
         introducimos = 'INSERT INTO Excepciones (Fecha) VALUES (:Fecha)'
         parametros = {'Fecha':fecha}
         sql.anadeFila(cursor,introducimos,parametros,conexion)
         sql.CierraBd(conexion)                                      
         
-        listaTablaExcepciones(proyecto,proyectoSinExt,[300,2100,2195,420])               
+        listaTablaExcepciones(proyecto,proyectoSinExt,[550,700,900,650],7,True)               
                 
-        screen.paper(400,1100,3,2)
-        screen.textAlone(1400,579,"¿Quieres añadir otra excepción? (S/N): ")
-        screen.updateScreen()
-        respuesta = screen.pushAndCome()
-        if respuesta.upper() == "N":
-            screen.paper(400,1100,3,2)
-            mensajeConPausa("Excepción(es) añadida(s) con éxito")
-            in_function = False  
-             
+        mensajeConPausa("¿Otra excepción? (S/N)",False,False)
+        stay = True
+        while stay:
+            respuesta = screen.pushAndCome(options = 0)
+            if respuesta.upper() == "N":
+                in_function = False  
+                stay = False
+                mensajeConPausa("Añadidas con éxito")
+            elif respuesta.upper() == "S":
+                mensajeConPausa("")
+                stay = False     
     return                                             
 
 def cuestionarioExcepciones():
     
-    fecha = screen.AnswerChain([2000,343,500,40],13)
-    
+    fecha = screen.AnswerChain([1150,244,500,40],13)    
+    anular = CotejaAnulacion(fecha)
     return fecha
 
 def menuProyectoTablas(proyecto,proyectoSinExt):                
@@ -584,12 +636,12 @@ def menuProyectoTablas(proyecto,proyectoSinExt):
     in_function = True
     while in_function:
         
-        screen.paper(250,500,9)
-        screen.text(350,700,[f"Datos '{proyectoSinExt}'",
+        screen.paper(50,100,9)
+        screen.text(150,300,[f" Consultar datos de\n{proyectoSinExt}",
                         "1 - Datos base","2 - Datos proceso","3 - Excepciones"])
         screen.updateScreen()
         
-        destino = screen.pushAndCome()
+        destino = screen.pushAndCome(options = 4)
         if destino == "1":      menuProyectoTablasBase(proyecto,proyectoSinExt)
         elif destino == "2":    menuProyectoTablasProceso(proyecto,proyectoSinExt)
         elif destino == "3":    menuProyectoTablasExcepciones(proyecto,proyectoSinExt)
@@ -598,29 +650,34 @@ def menuProyectoTablas(proyecto,proyectoSinExt):
         
     return
 
+def esperaPulsaTecla():
+    mensajeConPausa("Pulsa una tecla",False,False)
+    screen.updateScreen()
+    screen.pushAndCome(options = 0)
+    
 def menuProyectoTablasBase(proyecto,proyectoSinExt):  
               
     listaDatosTablasBase(proyecto,proyectoSinExt)               
-
+    esperaPulsaTecla()
     return
 
 def listaDatosTablasBase(proyecto,proyectoSinExt):
     
     carpeta = "Database/{}".format(proyecto)                
     tabla = sql.SeleccionaTodasFilas(carpeta,"Datos")       
-    screen.paper(150,1200,13,2)
+    screen.paper(50,700,13,2)
     datos_a_pintar = [proyectoSinExt,"","Estado:","Cliente:",
                       "Inicio Proyecto:","Fecha Entrega:","Unidad de cálculo:",
                       "Páginas de origen:","Tipo Trabajo:","Tabla Usar:",
                       "Caracteres Holandesa:","Coste de la Holandesa:","Palab. Origen Destino:",
                       "Euros Página:","% Correc:","Notas:"]
-    posicion = 220
+    posicion = 150
     for i in datos_a_pintar:
         
-        screen.textAlone(1400,posicion,i)
-        posicion += 49
+        screen.textAlone(900,posicion,i)
+        posicion += 49 
     
-    posicion = 220
+    posicion = 150
     frase = 0
     for i in tabla[0]:
         
@@ -659,120 +716,147 @@ def listaDatosTablasBase(proyecto,proyectoSinExt):
         elif frase == 0:
             
             i = ""    
-        screen.textAlone(1800,posicion,str(i))
+        screen.textAlone(1300,posicion,str(i))
         if frase == 0:
             
-            posicion += 49
+            posicion += 49 
             
-        posicion += 49
-        frase += 1
-        
-    screen.updateScreen()  
-    
+        posicion += 49 
+        frase += 1           
     return  
 
 def menuProyectoTablasProceso(proyecto,proyectoSinExt): 
             
-    listaDatosTablaProceso(proyecto,proyectoSinExt,[150,1050,1260,220])             
-    
+    listaDatosTablaProceso(proyecto,proyectoSinExt,[50,700,900,150])             
     return                    
 
-def listaDatosTablaProceso(proyecto,proyectoSinExt,posiciones):
-    
+def listaDatosTablaProceso(proyecto,proyectoSinExt,posiciones,alto = 12,vuelve = False):
+            
+    opcion = ""
     carpeta = "Database/{}".format(proyecto)                        
-    try:
+    in_function = True
+    while in_function:
+        try:
+            
+            tabla = sql.SeleccionaTodasFilas(carpeta,"Proceso")  
+            tabla = sorted(tabla, key=lambda x: datetime.strptime(x[1], "%d/%m/%y"))
+        except:
+            
+            mensajeConPausa(f"No hay procesos para\n{proyectoSinExt}")
+            in_function = False
+            break
         
-        tabla = sql.SeleccionaTodasFilas(carpeta,"Proceso")  
-        tabla = sorted(tabla, key=lambda x: datetime.strptime(x[1], "%d/%m/%y"))
-                   
-        if len(tabla) <= 3:
+        mensajeConPausa("Cursores rota lista\nOtra tecla salir",False,False)    
+        in_rotative = True
+        posicion = 0
+        while in_rotative:
+            posicionY = posiciones[3]+int((screen.height*100)/1440)
+            screen.paper(posiciones[0],posiciones[1],alto,2)
+            screen.textAlone(posiciones[2],posiciones[3],"Procesos de "+proyectoSinExt)        
+            if vuelve == False or len(tabla) < alto+2:
+                a_mostrar = tabla[posicion:posicion+alto+3]
+            else:
+                a_mostrar = tabla[len(tabla)-alto:len(tabla)]
+            for i in a_mostrar:
+                if i[3] == "T":
+                    
+                    b = "Traducción"
+                    
+                elif i[3] == "R":
+                    
+                    b = "Revisión"
+                    
+                else:
+                    
+                    b = "Corrección"
+                screen.textAlone(posiciones[2],posicionY,f"{i[0]} - A {i[1]},  realicé")
+                screen.textAlone(posiciones[2],posicionY,f"                                {i[2]} páginas de {b}")
+                screen.updateScreen()    
+                posicionY += 49
             
-            valor = 5
-            
-        else:
-            
-            valor = len(tabla)+2
-            
-        screen.paper(posiciones[0],posiciones[1],valor,2)
-        screen.textAlone(posiciones[2],posiciones[3],"Procesos de "+proyectoSinExt)
+            time.sleep(0.1)
+            if vuelve == False:
+                opcion = screen.pushAndCome(suma=posicion,options = 16,pos = [858,180],interlin = 49,anchozona = 1200)
+            else:
+                opcion = ""
+            if opcion == "98": 
+                if posicion > 0:
+                    posicion -= 1
+            elif opcion == "99": 
+                if posicion < len(tabla)-15:
+                    posicion += 1
+            else:
+                in_rotative = False 
+        in_function = False 
         
-    except:
-        
-        screen.paper(posiciones[0],posiciones[1],3,2)
-        screen.textAlone(posiciones[2],posiciones[3]+int((screen.height*100)/1440),"No hay procesos para "+proyectoSinExt)
-        tabla = []
-        
-    posicion = posiciones[3]+int((screen.height*100)/1440)
-    
-    for i in tabla:
-        
-        if i[3] == "T":
-            
-            b = "Traducción"
-            
-        elif i[3] == "R":
-            
-            b = "Revisión"
-            
-        else:
-            
-            b = "Corrección"
-            
-        screen.textAlone(posiciones[2],posicion,f"{i[0]} - A {i[1]},  realicé")
-        screen.textAlone(posiciones[2],posicion,f"                                {i[2]} páginas de {b}")
-        posicion += 49  
-        
-    return  
+    return opcion
             
 def menuProyectoTablasExcepciones(proyecto,proyectoSinExt):   
       
-    listaTablaExcepciones(proyecto,proyectoSinExt,[150,1200,1400,220])               
-
+    listaTablaExcepciones(proyecto,proyectoSinExt,[50,700,900,150])               
     return
 
-def listaTablaExcepciones(proyecto,proyectoSinExt,posiciones):  
+def listaTablaExcepciones(proyecto,proyectoSinExt,posiciones,alto = 12,vuelve = False):  
     
     carpeta = "Database/{}".format(proyecto)                            
-    try:
+    in_function = True
+    while in_function:
+        try:
+            
+            tabla = sql.SeleccionaTodasFilas(carpeta,"Excepciones") 
+            tabla = sorted(tabla, key=lambda x: datetime.strptime(x[1], "%d/%m/%y"))    
+            
+        except:
+            
+            mensajeConPausa(f"No hay excepciones para\n{proyectoSinExt}")
+            in_function = False
+            break
         
-        tabla = sql.SeleccionaTodasFilas(carpeta,"Excepciones") 
-        tabla = sorted(tabla, key=lambda x: datetime.strptime(x[1], "%d/%m/%y"))    
-        if len(tabla) <= 3:
-                
-            valor = 5
-                
-        else:
-                
-            valor = len(tabla)+2
-                
-            screen.paper(posiciones[0],posiciones[1],valor,2)
+        mensajeConPausa("Cursores rota lista\nOtra tecla salir",False,False)
+        in_rotative = True
+        posicion = 0
+        while in_rotative:    
+            posicionY = posiciones[3]+int((screen.height*100)/1440)
+            screen.paper(posiciones[0],posiciones[1],alto,2)
             screen.textAlone(posiciones[2],posiciones[3],"Excepciones de "+proyectoSinExt)
-        
-    except:
-        
-        screen.paper(posiciones[0],posiciones[1],3,2)
-        screen.textAlone(posiciones[2],posiciones[3],"No hay excepciones para "+proyectoSinExt)
-        tabla = []
-        
-    posicion = posiciones[3]+int((screen.height*100)/1440)
-    for i in tabla:
-        
-        screen.textAlone(posiciones[2],posicion,f"{i[0]} - El {i[1]} no se trabaja")
-        posicion += 49    
-    
-    return
+            if vuelve == False or len(tabla) < alto+2:
+                a_mostrar = tabla[posicion:posicion+alto+3]
+            else:
+                a_mostrar = tabla[len(tabla)-alto:len(tabla)]
+                
+            for i in a_mostrar:
+                
+                screen.textAlone(posiciones[2],posicionY,f"{i[0]} - El {i[1]} no se trabaja")
+                screen.updateScreen()
+                posicionY += 49
+                
+            time.sleep(0.1)
+            if vuelve == False:
+                opcion = screen.pushAndCome(suma=posicion,options = 16,pos = [858,131],interlin = 49,anchozona = 1200)
+            else:
+                opcion = ""
+            if opcion == "98":
+                if posicion > 0:
+                    posicion -= 1
+            elif opcion == "99":
+                if posicion < len(tabla)-15:
+                    posicion += 1
+            else:
+                in_rotative = False    
+        in_function = False
+    return opcion
 
 def menuProyectoElimina(proyecto,proyectoSinExt):               
     
     in_function = True
     while in_function:
         
-        screen.paper(250,500,9)
-        screen.text(350,700,[f"Elimina '{proyectoSinExt}'",
-                    "1 - Proyecto entero","2 - Algún dato del proceso","3 - Alguna excepción"])
+        screen.paper(50,100,9)
+        screen.text(150,300,[f"Elimina\n{proyectoSinExt}",
+                    "1 - Proyecto entero","2 - Proceso","3 - Excepción"])
         screen.updateScreen()
         
-        destino = screen.pushAndCome()
+        destino = screen.pushAndCome(options = 4)
         
         resultado = False
         in_function = False
@@ -788,22 +872,20 @@ def menuProyectoElimina(proyecto,proyectoSinExt):
     
 def menuProyectoEliminaProyecto(proyecto,proyectoSinExt):
     
-           
-    screen.paper(1000,400,3,2)
-    screen.textAlone(450,1100,f"¿Seguro de que quieres eliminar {proyectoSinExt}? (S/N): ")                                         
-    screen.updateScreen()
-    respuesta = screen.pushAndCome()
-    if respuesta.upper() == "S":                                                                                                            
-        os.remove("Database/{}".format(proyecto))                                                                                           
-        screen.SoundKillData()
-        screen.textAlone(450,1159,"Proyecto eliminado con éxito")
-        screen.updateScreen()
-        time.sleep(1)
-        screen.paper(1000,400,3,2)
-        return  True                                                                                                                       
-    else:
-        screen.paper(1000,400,3,2)
-        return  False                                                                                                        
+    stay = True
+    while stay:
+        mensajeConPausa(f"¿Eliminar el proyecto\n{proyectoSinExt}?\n(S/N)",False,False)
+        respuesta = screen.pushAndCome(options = 0)
+        if respuesta.upper() == "S":                                                                                                            
+            os.remove("Database/{}".format(proyecto))                                                                                           
+            screen.SoundKillData()
+            mensajeConPausa("Proyecto eliminado")
+            stay = False
+            return  True                                                                                                                       
+        elif respuesta.upper() == "N":
+            mensajeConPausa("No se eliminó\nel proyecto")
+            stay = False
+            return  False                                                                                                        
             
 def menuProyectoEliminaProceso(proyecto,proyectoSinExt):
             
@@ -811,44 +893,50 @@ def menuProyectoEliminaProceso(proyecto,proyectoSinExt):
     while in_function:
         
         id_seleccionado, tabla, carpeta, in_function = PintaListaCorrecta("Proceso",proyecto,proyectoSinExt,listaDatosTablaProceso)    
-        if in_function == False: break
+        if in_function == False: 
+            break
                
-        screen.textAlone(450,1159,f"¿Quieres eliminar el proceso {id_seleccionado}? (S/N): ")                                         
-        screen.updateScreen()
-        
-        respuesta = screen.pushAndCome()
-        if respuesta.upper() == "S":    
-                                                                                                                    
-            try:             
-                                                                       
-                id_de_linea_a_borrar = None
-                for i in tabla:     
+        mensajeConPausa(f"¿Eliminar proceso\n{id_seleccionado}?\n(S/N)",False,False)        
+        stay = True
+        while stay:
+            respuesta = screen.pushAndCome(options = 0)
+            if respuesta.upper() == "S":    
+                stay = False                                                                                                        
+                try:             
+                                                                        
+                    id_de_linea_a_borrar = None
+                    for i in tabla:     
+                                                                        
+                        if i[0] == int(id_seleccionado):  
                                                                     
-                    if i[0] == int(id_seleccionado):  
-                                                                
-                            id_de_linea_a_borrar = int(id_seleccionado)                                        
-                            break     
-                                                                          
-                if id_de_linea_a_borrar is not None:
-                    
-                    conexion,cursor = sql.creaAbreBd(carpeta)                               
-                    sql.EliminaFilaenTabPro(cursor,"Proceso",id_de_linea_a_borrar)                   
-                    sql.CierraBd(conexion)                                              
-                    mensajeConPausa("Proceso eliminado con éxito")
-                    listaDatosTablaProceso(proyecto,proyectoSinExt,[300,2100,2235,420])  
-                               
-                else:
-                    
-                    screen.SoundWrongAnswer()
-                    mensajeConPausa("No existe el ID seleccionado")
-                    
-            except:             
-                                                                    
-                    screen.SoundWrongAnswer()
-                    mensajeConPausa("Error al borrar el proceso")                                              
+                                id_de_linea_a_borrar = int(id_seleccionado)                                        
+                                break     
+                                                                            
+                    if id_de_linea_a_borrar is not None:
+                        
+                        conexion,cursor = sql.creaAbreBd(carpeta)                               
+                        sql.EliminaFilaenTabPro(cursor,"Proceso",id_de_linea_a_borrar)                   
+                        sql.CierraBd(conexion)                                              
+                        listaDatosTablaProceso(proyecto,proyectoSinExt,[50,700,900,150],12,True)  
+                        mensajeConPausa("Proceso eliminado")
+                                
+                    else:
+                        
+                        screen.SoundWrongAnswer()
+                        mensajeConPausa("ID inexistente")
+                        
+                except:             
+                                                                        
+                        screen.SoundWrongAnswer()
+                        mensajeConPausa("Error en el proceso\nde borrado")                                              
+                
+                in_function = False
             
-            in_function = False
-                                                     
+            elif respuesta.upper() == "N":
+                    
+                    mensajeConPausa("No se eliminó\nel proceso")
+                    in_function = False                                             
+                    stay = False
         return
     
 def menuProyectoEliminaExcepcion(proyecto,proyectoSinExt): 
@@ -857,46 +945,52 @@ def menuProyectoEliminaExcepcion(proyecto,proyectoSinExt):
     while in_function:
         
         id_seleccionado, tabla, carpeta, in_function = PintaListaCorrecta("Excepciones",proyecto,proyectoSinExt,listaTablaExcepciones)         
-        if in_function == False: break
+        if in_function == False: 
+            break
         
-        screen.textAlone(450,1159,f"¿Quieres eliminar la excepción {id_seleccionado}? (S/N): ")                                         
-        screen.updateScreen()
-        
-        respuesta = screen.pushAndCome()
-        if respuesta.upper() == "S":  
-                                                                                                                      
-            try:                
-                                                                        
-                id_de_linea_a_borrar = None 
-                
-                for i in tabla:   
-                                                                          
-                    if i[0] == int(id_seleccionado): 
+        mensajeConPausa(f"¿Eliminar excepción\n{id_seleccionado}?\n(S/N)",False,False)
+        stay = True
+        while stay:
+            respuesta = screen.pushAndCome(options = 0)
+            if respuesta.upper() == "S":  
+                stay = False                                                                                                        
+                try:                
+                                                                            
+                    id_de_linea_a_borrar = None 
+                    
+                    for i in tabla:   
+                                                                            
+                        if i[0] == int(id_seleccionado): 
+                            
+                                id_de_linea_a_borrar = int(id_seleccionado)                                        
+                                break     
+                                                                            
+                    if id_de_linea_a_borrar is not None:
                         
-                            id_de_linea_a_borrar = int(id_seleccionado)                                        
-                            break     
-                                                                          
-                if id_de_linea_a_borrar is not None:
-                    
-                    conexion,cursor = sql.creaAbreBd(carpeta)                                   
-                    sql.EliminaFilaenTabPro(cursor,"Excepciones",id_de_linea_a_borrar)                 
-                    sql.CierraBd(conexion)                                                  
-                    screen.SoundKillData()
-                    mensajeConPausa("Excepción eliminada con éxito")
-                    listaTablaExcepciones(proyecto,proyectoSinExt,[300,2100,2305,420]) 
-                                  
-                else:
-                    
+                        conexion,cursor = sql.creaAbreBd(carpeta)                                   
+                        sql.EliminaFilaenTabPro(cursor,"Excepciones",id_de_linea_a_borrar)                 
+                        sql.CierraBd(conexion)                                                  
+                        screen.SoundKillData()
+                        listaTablaExcepciones(proyecto,proyectoSinExt,[50,700,900,150],12,True)
+                        mensajeConPausa("Excepción eliminada") 
+                                    
+                    else:
+                        
+                        screen.SoundWrongAnswer()
+                        mensajeConPausa("ID inexistente")
+                        
+                except:     
+                                                                                    
                     screen.SoundWrongAnswer()
-                    mensajeConPausa("No existe el ID seleccionado")
-                    
-            except:     
-                                                                                
-                    screen.SoundWrongAnswer()
-                    mensajeConPausa("Error al borrar la excepción")
-                    
-            in_function = False
+                    mensajeConPausa("Error en el proceso\nde borrado")
+                        
+                in_function = False
             
+            elif respuesta.upper() == "N":
+                        
+                mensajeConPausa("No se eliminó\nla excepción")
+                in_function = False
+                stay = False    
         return                                        
         
 def menuProyectoGraficas(proyecto,proyectoSinExt):              
@@ -923,7 +1017,7 @@ def menuProyectoGraficas(proyecto,proyectoSinExt):
         
     conexion.close()                                                    
     screen.paperGraph(proyectoSinExt,Datos,Procesos,Excepciones)
-    
+    esperaPulsaTecla()    
     return
     
 def menuCreaProyecto():     
@@ -935,19 +1029,25 @@ def menuCreaProyecto():
                       "(T)raduc. (C)orrec.","Tabla Usar:","Calc.: (P)alab.(C)aract.p(A)g.",
                       "Caracteres Holandesa:","Coste de la Holandesa:","Palab. (O)rigen (D)estino:",
                       "Euros Página:","% Correc:","Notas:"]    
-    screen.paper(150,1200,16,2)
-    posicion = 225
+    screen.paper(50,700,16,2)
+    posicion = 150
     for i in datos_a_pintar:
         
-        screen.textAlone(1400,posicion,i)
-        posicion += 49
+        screen.textAlone(900,posicion,i)
+        posicion += 49 
         
     screen.updateScreen()
-    nombre = screen.AnswerChain([2000,323,600,40],9)
-
+    nombre = screen.AnswerChain([1600,250,600,40],9)
+    if nombre == "acción anulada":
+        screen.SoundKillData()
+        mensajeConPausa("Acción anulada")
+        return
     codigos_de_error = [3,4,1,2,4,5,4,6,4,4,7,4,8,0]
     datos_necesarios = ["",""]
-    estado,cliente,inicio_proyecto,fecha_entrega,paginas_origen,tipo_trabajo,tabla_usar,unidad_calculo,caracteres_holandesa,coste_holandesa,palabra_origen_destino,euros_pagina,tanto_ciento_correc,notas = cuestionarioProyecto(codigos_de_error,datos_necesarios)
+    YTexto = [342,391,440,489,538,587,636,685,734,783,832,881,930,979]
+    estado,cliente,inicio_proyecto,fecha_entrega,paginas_origen,tipo_trabajo,tabla_usar,unidad_calculo,caracteres_holandesa,coste_holandesa,palabra_origen_destino,euros_pagina,tanto_ciento_correc,notas = cuestionarioProyecto(codigos_de_error,datos_necesarios,YTexto)
+    if estado == "acción anulada":                                                      # Si el estado es "Acción anulada"
+        return                                                                          # Sale de la función
     crea_tabla = f'''
                      CREATE TABLE IF NOT EXISTS Datos(
                             ID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -968,15 +1068,15 @@ def menuCreaProyecto():
                     '''                                                                                     
     if estado == "A":   
                                                                     
-        BdProyecto,cursor = sql.creaAbreBd(f"Database/{nombre}.dba")   
+        nombre += ".dba"  
                          
     elif estado == "I":  
                                                                    
-        BdProyecto,cursor = sql.creaAbreBd(f"Database/{nombre}.dbi")          
+        nombre += ".dbi"        
                   
     elif estado == "C":    
-                                                                 
-        BdProyecto,cursor = sql.creaAbreBd(f"Database/{nombre}.dbc")    
+        nombre += ".dbc"                                                         
+    BdProyecto,cursor = sql.creaAbreBd(f"Database/{nombre}")    
                         
     cursor = sql.CreaUnaTabla(cursor,crea_tabla)                                        
     
@@ -988,57 +1088,84 @@ def menuCreaProyecto():
                     :paginas,:tipo,:tabla,:caracteres,:euros,
                     :palabra,:eurospag,:tanto,:notas)'''                                    
     estos_datos = {'estado':estado, 'cliente':cliente, 'inicio':inicio_proyecto, 
-              'entrega':fecha_entrega, 'unidad':unidad_calculo, 'paginas':paginas_origen, 
-              'tipo':tipo_trabajo, 'tabla':tabla_usar, 'caracteres':caracteres_holandesa, 
-              'euros':coste_holandesa, 'palabra':palabra_origen_destino, 'eurospag':euros_pagina, 
+              'entrega':fecha_entrega, 'unidad':unidad_calculo,
+              'paginas':paginas_origen, 'tipo':tipo_trabajo, 'tabla':tabla_usar,
+              'caracteres':caracteres_holandesa,'euros':coste_holandesa, 
+              'palabra':palabra_origen_destino, 'eurospag':euros_pagina, 
               'tanto':tanto_ciento_correc, 'notas':notas}                                     
     sql.anadeFila(cursor, insertamos, estos_datos, BdProyecto)                                          
     sql.CierraBd(BdProyecto) 
     
-    mensajeConPausa("Proyecto creado con éxito")
+    BdProyecto, cursor = sql.creaAbreBd(f"Database/{nombre}")                               # Abre la base de datos del proyecto
+    crea_excepciones =  '''
+                        CREATE TABLE IF NOT EXISTS Excepciones(
+                            ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                            Fecha TEXT)
+                        '''                                                                 # Crea la tabla de excepciones
+    cursor = sql.CreaUnaTabla(cursor,crea_excepciones)                                      # Crea la tabla de excepciones
+    sql.CierraBd(BdProyecto)                                                                # Cierra la base de datos del proyecto
+    
+    mensajeConPausa("Proyecto creado con éxito")                                            # Muestra un mensaje
                                                                                    
-    return    
+    return                                                                                  # Sale de la función
 
-def cuestionarioProyecto(errores,datos_necesarios):   
-                                      
-    tabla_usar,unidad_calculo,caracteres_holandesa,coste_holandesa,palabra_origen_destino,euros_pagina, = "", "","","","",""
-    estado = screen.AnswerChain([2000,421,600,40],errores[0])
-    listado,carpeta = preparaListaClientes()                                            
-    listaClientes(listado)                                            
-    cliente = screen.AnswerChain([2000,470,600,40],errores[1])
-    inicio_proyecto = screen.AnswerChain([2000,519,600,40],errores[2])   
-    fecha_entrega = screen.AnswerChain([2000,568,600,40],errores[3])
-    paginas_origen = screen.AnswerChain([2000,617,600,40],errores[4])
-    tipo_trabajo = screen.AnswerChain([2000,666,600,40],errores[5])
-    if tipo_trabajo == "C" or tipo_trabajo == "" and datos_necesarios[0] == "C":
-        listado,carpeta = preparaListaTablas()
-        listaTablas(listado)
-        tabla_usar = screen.AnswerChain([2000,715,600,40],errores[6]) 
-    elif tipo_trabajo == "T" or tipo_trabajo == "" and datos_necesarios[0] == "T":
-        unidad_calculo = screen.AnswerChain([2000,764,600,40],errores[7]) 
-        if unidad_calculo == "C" or unidad_calculo == "" and datos_necesarios[1] == "C":
-            caracteres_holandesa = screen.AnswerChain([2000,813,600,40],errores[8]) 
-            coste_holandesa = screen.AnswerChain([2000,862,600,40],errores[9])
-        elif unidad_calculo == "P" or unidad_calculo == "" and datos_necesarios[1] == "P":
-            palabra_origen_destino = screen.AnswerChain([2000,911,600,40],errores[10]) 
-        else:
-            euros_pagina = screen.AnswerChain([2000,960,600,40],errores[11]) 
-    tanto_ciento_correc = screen.AnswerChain([2000,1009,600,40],errores[12])
-    notas = screen.AnswerChain([2000,1058,600,40],errores[13])    
-      
-    return estado,cliente,inicio_proyecto,fecha_entrega,paginas_origen,tipo_trabajo,tabla_usar,unidad_calculo,caracteres_holandesa,coste_holandesa,palabra_origen_destino,euros_pagina,tanto_ciento_correc,notas
-            
+def CotejaAnulacion(estado):                                                            # Coteja si se ha pedido suspender la acción
+    if estado == "acción anulada":                                                      # Si el estado es "acción anulada"
+        screen.SoundKillData()                                                          # Activa el sonido de error
+        mensajeConPausa("Acción anulada")                                               # Muestra un mensaje y sale de la función
+        return True                                                                     # Devuelve True
+    else:                                                                               # Si no
+        return False                                                                    # Devuelve False
+    
+def cuestionarioProyecto(errores,datos_necesarios,YTexto = [293,342,391,440,489,538,587,636,685,734,783,832,881,930]):   
+    tabla_usar,unidad_calculo,caracteres_holandesa,coste_holandesa,palabra_origen_destino,euros_pagina, = "","","","","",""
+    error = [0,1,2,3,4,5,6,7,8,9,10,11,12,13]
+    estado,cliente,inicio_proyecto,fecha_entrega,paginas_origen,tipo_trabajo,tanto_ciento_correc,notas = "","","","","","","",""
+    variablesPasar = ["","","","","","","","","","","","","",""]    
+    i = 0
+    cliente_dado = ""
+    tabla_dada = ""
+    while i < 14:
+        if i == 1:
+            data = cliente_dado
+            screen.textAlone(1600,YTexto[i],data)
+        elif i == 6:
+            data = tabla_dada
+            screen.textAlone(1600,YTexto[i],data)
+        else:    
+            data = screen.AnswerChain([1600,YTexto[i],600,40],errores[error[i]])
+        anular = CotejaAnulacion(data) 
+        if anular: return (data,)*14
+        variablesPasar[i] = data
+        if i == 0:
+            listado,carpeta = preparaListaClientes()
+            cliente_dado = listaClientes(listado)
+        if i == 5:
+            if variablesPasar[5] == "C" or variablesPasar[5] == "" and datos_necesarios[0] == "C":
+                listado,carpeta = preparaListaTablas()
+                tabla_dada= listaTablas(listado)
+            elif variablesPasar[5] == "T" or variablesPasar[5] == "" and datos_necesarios[0] == "T":
+                i += 1
+        if i == 7:
+            if variablesPasar[7] == "P" or variablesPasar[7] == "" and datos_necesarios[1] == "P":
+                i += 2
+            elif variablesPasar[7] != "C" or variablesPasar[7] == "" and datos_necesarios[1] != "C":
+                i += 3
+        i += 1
+    estado,cliente,inicio_proyecto,fecha_entrega,paginas_origen,tipo_trabajo,tabla_usar,unidad_calculo,caracteres_holandesa,coste_holandesa,palabra_origen_destino,euros_pagina,tanto_ciento_correc,notas=variablesPasar
+    return estado,cliente,inicio_proyecto,fecha_entrega,paginas_origen,tipo_trabajo,tabla_usar,unidad_calculo,caracteres_holandesa,coste_holandesa,palabra_origen_destino,euros_pagina,tanto_ciento_correc,notas                                      
+    
 def menuClientes():                
         
     in_function = True
     while in_function:
         
-        screen.paper(100,200,10)
-        screen.text(200,400,[f"Menú de Clientes",
+        screen.paper(50,100,10)
+        screen.text(150,300,[f"Menú de Clientes",
                     "1 - Crear Cliente","2 - Consultar Cliente","3 - Modificar Cliente","4 - Eliminar Cliente"])
         screen.updateScreen()
         
-        destino = screen.pushAndCome()
+        destino = screen.pushAndCome(options = 5)
         if destino == "1":      creaCliente()
         elif destino == "2":    consultaCliente()
         elif destino == "3":    modificaCliente()
@@ -1064,23 +1191,35 @@ def creaCliente():
         in_answer = True
         while in_answer:  
               
-            screen.paper(150,1200,14,2)    
-            posicion = 225
+            screen.paper(50,700,14,2)    
+            posicion = 150
             for i in datos_a_pintar:
                 
-                screen.textAlone(1400,posicion,i)
-                posicion += 49
+                screen.textAlone(900,posicion,i)
+                posicion += 49 
                 
             screen.updateScreen()
-            nombre = screen.AnswerChain([2000,346,600,40],9)
+            nombre = screen.AnswerChain([1300,248,600,40],9)
+            if nombre == "acción anulada":
+                screen.SoundKillData()            
+                mensajeConPausa("Acción anulada")
+                return
             telefono,direccion,ciudad,cp, pais,nif,contacto,telefono_contacto,email_contacto,pago_previo = cuestionarioClientes()
-
-            screen.textAlone(1400,1054,"¿Son correctos los datos (S/N)?")
-            screen.updateScreen()
-            respuesta = screen.pushAndCome()
-            if respuesta.upper() == "S":
+            if "acción anulada" in telefono:
+                return
+            mensajeConPausa("¿Datos correctos?\n(S/N)",False,False)
+            stay = True
+            while stay:
                 
-                in_answer = False
+                respuesta = screen.pushAndCome(options = 0)
+                if respuesta.upper() == "S":
+                    
+                    in_answer = False
+                    stay = False
+                elif respuesta.upper() == "N":
+                        
+                        stay = False
+                        mensajeConPausa("Repitamos")
             
         conexion,cursor = sql.creaAbreBd(carpeta)                           
         insertamos = f'INSERT INTO Clientes (Nombre, Telefono, Direccion, Ciudad, cp, pais, Nif, Contacto, TelContacto, EmailContacto,PagoPrevio ) VALUES (:nombre, :telefono, :direccion, :ciudad, :cp, :pais, :nif, :contacto, :telContacto, :emailContacto, :pagoPrevio)'   
@@ -1094,40 +1233,40 @@ def creaCliente():
         listado,carpeta = preparaListaClientes()                                            
         listaClientes(listado)  
         
-        screen.paper(400,1100,3,2)                                         
-        screen.textAlone(1400,1113,"¿Quieres crear otro cliente (S/N)?")
-        screen.updateScreen()
+        mensajeConPausa("¿Añadir otro?\n(S/N)",False,False)
         
-        respuesta = screen.pushAndCome()
-        if respuesta.upper() == "N":
-            screen.paper(400,1100,3,2)  
-            mensajeConPausa("Cliente(s) creado(s) con éxito")
-            in_function = False
-            
+        stay = True
+        while stay:
+            respuesta = screen.pushAndCome(options = 0)
+            if respuesta.upper() == "N":
+                
+                in_function = False
+                stay = False
+            elif respuesta.upper() == "S":
+                stay = False
     return                                              
  
 def cuestionarioClientes(): 
-                                                  
-    telefono = screen.AnswerChain([2000,464,600,40],4)
-    direccion = screen.AnswerChain([2000,523,600,40])
-    ciudad = screen.AnswerChain([2000,582,600,40])
-    cp = screen.AnswerChain([2000,641,600,40],4)
-    pais = screen.AnswerChain([2000,700,600,40])
-    nif = screen.AnswerChain([2000,759,600,40])
-    contacto = screen.AnswerChain([2000,818,600,40])
-    telefono_contacto = screen.AnswerChain([2000,877,600,40],4)
-    email_contacto = screen.AnswerChain([2000,936,600,40])
-    pago_previo = screen.AnswerChain([2000,995,600,40],4)
+    datos = ["","","","","","","","","",""]
+    error = [4,0,0,4,0,0,0,4,0,4]    
+    for i in range(10):
+        
+        datos[i] = screen.AnswerChain([1600,346+(49*i),600,40],error[i])                                          
+        anular = CotejaAnulacion(datos[i])
+        if anular: 
+            return (datos[i],)*10
     
+    telefono,direccion,ciudad,cp,pais,nif,contacto,telefono_contacto,email_contacto,pago_previo = datos
+
     return telefono,direccion,ciudad,cp,pais,nif,contacto,telefono_contacto,email_contacto,pago_previo
     
-def consultaCliente():     
+def consultaCliente():    
                                          
     in_function = True
     while in_function:
         
         listado,carpeta = preparaListaClientes()                                            
-        listaClientes(listado)                                            
+        opcion = listaClientes(listado)                                            
 
         opciones = ["0"]
         for i in range (1,len(listado)+1):
@@ -1137,7 +1276,6 @@ def consultaCliente():
         in_answer = True                                                                           
         while in_answer:                                                                           
         
-            opcion = screen.pushAndCome()
             if opcion in opciones:                                                              
         
                 in_answer = False                                                                  
@@ -1160,19 +1298,22 @@ def consultaCliente():
         
             valor = len(filas[0])+2
         
-        screen.paper(100,700,valor,2)
-        screen.textAlone(300,220,"Datos del cliente "+cliente)
+        screen.paper(50,700,valor,2)
+        screen.textAlone(900,150,"Datos del cliente "+cliente)
         titulos = ["ID","Nombre:","Teléfono:","Dirección:","Ciudad:","C.P.:","País:","NIF:","Contacto:","Teléfono contacto:","Email contacto:","Pago previo:"]
-        posicion = 320
+        posicion = 250
         orden = 0
         for i in filas[0]:
         
             screen.textAlone(900,posicion,f"{titulos[orden]}")
-            screen.textAlone(1050,posicion,f"       {i}")
+            screen.textAlone(1200,posicion,f"       {i}")
             orden += 1
-            posicion += 49
+            posicion += 49 
         
         in_function = False
+        
+        mensajeConPausa("Pulsa una tecla",False,False)
+        screen.pushAndCome(options = 0)
         
     return                                                                  
 
@@ -1201,23 +1342,45 @@ def preparaListaClientes():
                                                                      
     return listado,carpeta
     
-def listaClientes(listado):      
-                                          
-    if len(listado)<3:
-        screen.paper(150,300,5)
-    else:
-        screen.paper(150,300,len(listado)+5)
-        
-    todos_clientes = ["Todos los clientes"]
+def listaClientes(listado):     
+    
+    mensajeConPausa("Elige opción\nCursores mueve lista",
+                    False,False)
+    
+    posicion = 0
     numeracion = 1
-    for i in listado:
+    in_function = True
+    while in_function:                                      
         
-        todos_clientes.append(f"{numeracion} - {i}")
-        numeracion += 1
-        
-    screen.text(250,500,todos_clientes)
-    screen.updateScreen()
-
+        screen.paper(51,100,12,False)     
+        todos_clientes = ["Todos los clientes"]
+        lista_corta = listado[posicion:posicion+7]
+        for i in lista_corta:
+            if len(i)>20:
+                a = i[:20]
+                a = a + "..."
+            else:
+                a = i
+                
+            todos_clientes.append(f"{numeracion} - {a}")
+            numeracion += 1
+            
+        screen.text(150,300,todos_clientes,False)
+        screen.updateScreen()
+        time.sleep(0.1)
+        pulsacion = screen.pushAndCome(suma=posicion,options = 7)
+        if pulsacion == "98":
+            if posicion > 0:                                                # Si la tecla es "98" y la posición es mayor que 0
+                posicion -= 1                                               # Disminuye la posición
+            numeracion = posicion+1
+        elif pulsacion == "99":
+            if posicion < len(listado) - 7:                                 # Si da cursor abajo y la posición es menor que la cantidad de tablas menos 7
+                posicion += 1                                               # Aumenta la posición
+            numeracion = posicion+1
+        else:                                                               # Si no
+            in_function = False                                             # Sale del bucle
+    return pulsacion
+                          
 def modificaCliente():                                          
 
     in_function = True
@@ -1227,19 +1390,14 @@ def modificaCliente():
         try:
             
             lista_clientes, carpeta = preparaListaClientes()
-            listaClientes(lista_clientes)
+            id_seleccionado = listaClientes(lista_clientes)
             
         except:
             
             mensajeConPausa("No hay clientes")                                  
             in_function = False
             break
-            
-        screen.paper(1000,400,3,2)
-        screen.textAlone(450,1100,f"Elige el ID del cliente a modificar:")
-        screen.updateScreen()
-        id_seleccionado = screen.AnswerChain([1400,1100,200,40],4)
-        
+                          
         if id_seleccionado == "0":
         
             in_function = False
@@ -1255,18 +1413,24 @@ def modificaCliente():
                           f"Teléfono contacto: {fila[0][9]}",f"Email contacto: {fila[0][10]}",
                           f"Pago previo: {fila[0][11]}"]
         
-        mensajeConPausa("Introduce datos (en blanco, mantiene antiguo)")
+        mensajeConPausa("Introduce datos\nEn blanco mantiene valor\nESC para anular",
+                    False,False) 
         
-        screen.paper(150,1200,13,2)
-        posicion = 225
+        screen.paper(50,700,13,2)
+        posicion = 150
         for i in datos_a_pintar:
             
-            screen.textAlone(1400,posicion,i)
-            posicion += 49
+            screen.textAlone(900,posicion,i)
+            posicion += 49 
             
         screen.updateScreen()
         
+        
         cliente_tupla = cuestionarioClientes()
+        if "acción anulada" in cliente_tupla:
+                
+                return
+            
         cliente = list(cliente_tupla)
         
         for i in range(len(cliente)):
@@ -1285,12 +1449,10 @@ def modificaCliente():
                         id_seleccionado)
             conexion,cursor = sql.creaAbreBd(carpeta)
             sql.Modificar(cursor,sentencia,parametros)
+            conexion.commit()
             sql.CierraBd(conexion)
-            
-            lista_clientes, carpeta = preparaListaClientes()
-            listaClientes(lista_clientes)
-            
-            mensajeConPausa("Cliente modificado con éxito")
+
+            mensajeConPausa("Cliente modificado")
             
         except:
             
@@ -1310,81 +1472,76 @@ def eliminaCliente():
         try:
             
             nombres,carpeta = preparaListaClientes()                                            
-            listaClientes(nombres)   
+            id_seleccionado = listaClientes(nombres)   
                                                      
         except:
             
-            screen.paper(1000,600,3,2)
-            screen.textAlone(950,1159,"No hay clientes")
-            screen.updateScreen()
-            time.sleep(2)
-            screen.paper(1000,600,3,2)
+            mensajeConPausa("No hay clientes")
             in_function = False                                         
         
-        screen.paper(1000,600,3,2)
-        screen.textAlone(950,1100,f"Elige el ID del cliente a borrar:")                                         
-        screen.updateScreen()
-        id_seleccionado = screen.AnswerChain([1600,1100,200,40],4)
+        if id_seleccionado == "0":
+                
+                in_function = False
+                break
+            
+        mensajeConPausa(f"¿Eliminar el cliente\n{id_seleccionado}?\n(S/N)",False,False)                                         
+        stay = True
+        while stay:
+            respuesta = screen.pushAndCome(options = 0)
         
-        screen.textAlone(950,1159,f"¿Quieres eliminar el cliente {id_seleccionado}? (S/N): ")                                         
-        screen.updateScreen()
-        respuesta = screen.pushAndCome()
-        
-        tabla = sql.SeleccionaTodasFilas(carpeta,"Clientes")                                 
-        
-        if respuesta.upper() == "S":    
-                                                                                                                    
-            try:  
-                                                                                  
-                id_de_linea_a_borrar = None
-                sumatorio = 1
-                for i in tabla: 
+            if respuesta.upper() == "S":
+                    
+                tabla = sql.SeleccionaTodasFilas(carpeta,"Clientes")                                 
+                
+                stay = False                                                                                                        
+                try:  
+                                                                                    
+                    id_de_linea_a_borrar = None
+                    sumatorio = 1
+                    for i in tabla: 
+                                                                            
+                        if sumatorio == int(id_seleccionado):
+                            
+                            id_de_linea_a_borrar = i[0]                                        
+                            break    
                                                                         
-                    if sumatorio == int(id_seleccionado):
+                        sumatorio += 1
+                    if id_de_linea_a_borrar is not None:
                         
-                        id_de_linea_a_borrar = i[0]                                        
-                        break    
-                                                                       
-                    sumatorio += 1
-                if id_de_linea_a_borrar is not None:
-                    
-                    conexion,cursor = sql.creaAbreBd(carpeta)                               
-                    sql.EliminaFilaenTabPro(cursor,"Clientes",id_de_linea_a_borrar)                   
-                    sql.CierraBd(conexion)                                              
-                    screen.SoundKillData()
-                    screen.textAlone(950,1208,"Cliente eliminado con éxito")
-                    nombres, carpeta = preparaListaClientes()                                            
-                    listaClientes(nombres) 
-                                                               
-                else:
-                    
-                    screen.SoundWrongAnswer()
-                    screen.textAlone(950,1208,"No existe el ID seleccionado")
-                    
-            except:  
-                                                                               
-                    screen.SoundWrongAnswer()
-                    screen.textAlone(950,1208,"Error al borrar el cliente")
-                    
-            screen.updateScreen()
-            time.sleep(2)
-            screen.paper(1000,600,3,2)
-        
+                        conexion,cursor = sql.creaAbreBd(carpeta)                               
+                        sql.EliminaFilaenTabPro(cursor,"Clientes",id_de_linea_a_borrar)                   
+                        sql.CierraBd(conexion)                                              
+                        screen.SoundKillData()
+                        mensajeConPausa("Cliente eliminado")                                        
+                    else:
+                        
+                        screen.SoundWrongAnswer()
+                        mensajeConPausa("ID inexistente")
+                        
+                except:  
+                                                                                
+                        screen.SoundWrongAnswer()
+                        mensajeConPausa("Error en el proceso\nde borrado")
+                        
+            elif respuesta.upper() == "N":
+                mensajeConPausa("No se eliminó\nel cliente")
+                stay = False
         in_function = False
             
     return                                                                  
 
-def menuTablasCorreccion():    
+def menuTablasCorreccion():                                                             # Menú de tablas de corrección    
     
-    in_function = True
+    in_function = True                                                              
     while in_function:
         
-        screen.paper(100,200,10)
-        screen.text(200,400,[f"Menú de Tablas para Corrección",
-                    "1 - Crear tabla","2 - Consultar tabla","3 - Modificar tabla","4 - Eliminar tabla"])
+        screen.paper(50,100,10)
+        screen.text(150,300,[f"Menú de Tablas\npara Corrección",
+                    "1 - Crear tabla","2 - Consultar tabla",
+                    "3 - Modificar tabla","4 - Eliminar tabla"])
         screen.updateScreen()
     
-        destino = screen.pushAndCome()
+        destino = screen.pushAndCome(options = 5)
         if destino == "1":      creaTabla()
         elif destino == "2":    consultaTabla()
         elif destino == "3":    modificaTabla()
@@ -1394,12 +1551,12 @@ def menuTablasCorreccion():
         
     return                             
 
-def creaTabla():  
+def creaTabla():                                                                        # Creamos una tabla de corrección nueva  
                                                   
     listado,carpeta = preparaListaTablas()
-    listaTablas(listado)
+
     nombre = ""
-    datos_a_pintar = ["Creando una tabla","","Nombre:",
+    datos_a_pintar = ["Creando una tabla","","Nombre:","","",
                     "De:","A:","Euros/palabra:"]
     conexion,cursor = sql.creaAbreBd("Database/Tablas.db")            
 
@@ -1409,17 +1566,22 @@ def creaTabla():
         in_answer = True                                                                           
         while in_answer:                                                                           
 
-            screen.paper(150,1200,7,2)
-            posicion = 225
+            screen.paper(50,700,7,2)
+            posicion = 125
             for i in datos_a_pintar:
                 
-                screen.textAlone(1400,posicion,i)
-                posicion += 49
+                screen.textAlone(900,posicion,i)
+                posicion += 49 
                 
             screen.updateScreen()
             if nombre == "":
                 
-                nombre = screen.AnswerChain([2000,346,600,40],9)
+                nombre = screen.AnswerChain([1200,224,600,40],9)
+                if nombre == "acción anulada":
+                    screen.SoundKillData()
+                    mensajeConPausa("Acción anulada")
+                    return
+                nombre = nombre.replace(" ","_")
                 crea_tabla = f'''
                    CREATE TABLE IF NOT EXISTS {nombre}(
                        ID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -1432,19 +1594,25 @@ def creaTabla():
                                                      
             else:
                 
-                screen.textAlone(1950,346,nombre)
+                screen.textAlone(1200,224,nombre)
                 
             sql.CierraBd(conexion)                                                                  
             de,a,euros = cuestionarioTabla()
             
-            screen.textAlone(1400,582,"¿Es correcto (S/N)?")
-            screen.updateScreen()
+            mensajeConPausa("¿correcto? (S/N)",False,False)
             
-            respuesta = screen.pushAndCome()
-            if respuesta == "S" or respuesta == "s":
+            stay = True
+            while stay:
                 
-                in_answer = False
-                
+                respuesta = screen.pushAndCome(options = 0)
+                if respuesta.upper() == "S":
+                    
+                    in_answer = False
+                    stay = False
+                elif respuesta.upper() == "N":
+                        
+                        stay = False
+                        mensajeConPausa("Repitamos")
         conexion,cursor = sql.creaAbreBd(carpeta)                           
         insertamos = f'INSERT INTO {nombre} (De, A, Euros) VALUES (:de, :a, :euros)'   
         esos_datos = {'de' : de,'a' : a, 'euros' : euros}                                
@@ -1452,25 +1620,32 @@ def creaTabla():
         sql.CierraBd(conexion)  
                                                                                     
         lineas = sql.SeleccionaTodasFilas(carpeta,nombre)
-        listaLaTabla(lineas,nombre,[300,2100,2435,420])        
+        listaLaTabla(lineas,nombre,[600,700,900,700])        
 
-        screen.paper(400,1100,3,2)
-        screen.textAlone(1400,641,"¿Quieres crear otra linea (S/N)?")
-        screen.updateScreen()
+        mensajeConPausa("¿Otra linea? (S/N)",False,False)
         
-        respuesta = screen.pushAndCome()
-        if respuesta == "N" or respuesta == "n":
-            screen.paper(400,1100,3,2)
-            mensajeConPausa("Tabla creada con éxito")
-            in_function = False
+        stay = True
+        while stay:
+            respuesta = screen.pushAndCome(options = 0)
+            if respuesta.upper() == "N":
+                mensajeConPausa("Tabla creada")
+                in_function = False
+                stay = False
+            elif respuesta.upper() == "S":
+                stay = False
   
     return                 
 
 def cuestionarioTabla():
     
-    de = screen.AnswerChain([2000,405,600,40],4)
-    a = screen.AnswerChain([2000,464,600,40],4)
-    euros = screen.AnswerChain([2000,523,600,40],11)
+    de,a,euros = "","",""
+    de = screen.AnswerChain([1300,372,600,40],4)
+    if de == "acción anulada":
+        return de,a,euros
+    a = screen.AnswerChain([1300,421,600,40],4)
+    if a == "acción anulada":
+        return de,a,euros
+    euros = screen.AnswerChain([1300,470,600,40],11)
     
     return de,a,euros
    
@@ -1479,23 +1654,24 @@ def consultaTabla():
     in_function = True
     while in_function:
         
+        tabla = ""
         listado,carpeta = preparaListaTablas()                                            
-        listaTablas(listado)                                            
+        opcion = listaTablas(listado)                                            
         
         opciones = ["0"]                                                                        
         for i in range(1,len(listado)+1):                                                       
             opciones.append(str(i))                                                             
         cotejo = True                                                                           
         while cotejo:                                                                           
-            opcion = screen.pushAndCome()
             if opcion in opciones:                                                              
                 cotejo = False                                                                  
         opcion = int(opcion)                                                                    
-        if opcion == 0: in_function = False                                                 
+        if opcion == 0: 
+            in_function = False
+            break                                                 
         
         try:
             
-            tabla = ""
             tabla = listado[int(opcion)-1]                                                   
         
         except:
@@ -1506,32 +1682,51 @@ def consultaTabla():
             break
         
         filas = sql.SeleccionaTodasFilas(carpeta,tabla)                                 
-        listaLaTabla(filas,tabla,[100,700,1035,220])                                            
+        fila = listaLaTabla(filas,tabla,[50,700,900,150])                                            
         in_function = False
         
-    return tabla                                                         
+    return tabla,fila                                                         
 
-def listaLaTabla(filas,tabla,posiciones): 
-                                               
-    if len(filas)<3:
+def listaLaTabla(filas,tabla,posiciones,lineas = 10):                               # Muestra la tabla
+    primero = 0                                                                     # Inicializa la variable
+    valor = 5 if len(filas) < 3 else (lineas if 
+                                      len(filas) > lineas else 
+                                      len(filas) + 2)                               # Calcula la cantidad de papel a poner en pantalla
         
-        valor = 5
+    in_function = True                                                              # Inicializa la variable
+    while in_function:                                                              # Bucle de la función
+        screen.paper(posiciones[0],posiciones[1],valor,2)                           # Pone el papel en pantalla                
+        screen.textAlone(posiciones[2],posiciones[3],"Tabla "+tabla)                # Pone el título de la tabla
+        posicion = posiciones[3]+100                                                # Pone la posición de la primera línea
+        PocasFilas,recorrido = [],0                                                 # Inicializa las variables      
+        for i in filas:                                                             # Recorre las filas de la tabla
+            if recorrido < primero or recorrido > primero + lineas:                 # Si la fila no está entre las que se deben mostrar
+                pass                                                                # No hace nada
+            else:                                                                   # Si está entre las que se deben mostrar
+                PocasFilas.append(i)                                                # La añade a la lista de las que se deben mostrar
+            recorrido += 1                                                          # Aumenta el recorrido
+        for i in PocasFilas:                                                        # Recorre las filas que se deben mostrar
+            
+            screen.textAlone(posiciones[2],posicion,
+                             f"{i[0]} - De {i[1]:} a")                              # Muestra la fila
+            screen.textAlone(posiciones[2],posicion,
+                            f"                     {i[2]:} palabras,")              # Muestra la fila
+            screen.textAlone(posiciones[2],posicion,
+                f"                                         {i[3]:>5} €/palabra")    # Muestra la fila
+            posicion += 49                                                           # Aumenta la posición  
         
-    else:
-        
-        valor = len(filas)+2
-        
-    screen.paper(posiciones[0],posiciones[1],valor,2)
-    screen.textAlone(posiciones[2],posiciones[3],"Tabla "+tabla)
-    posicion = posiciones[3]+100
-    for i in filas:
-        
-        screen.textAlone(posiciones[2],posicion,f"{i[0]} - De {i[1]:} a")
-        screen.textAlone(posiciones[2],posicion,f"                     {i[2]:} palabras,")
-        screen.textAlone(posiciones[2],posicion,f"                                         {i[3]:>5} €/palabra")
-        posicion += 49    
-    
-    return
+        mensajeConPausa("Selecciona una fila\nCursores mueve lista",
+                        False,False)                                        # Muestra un mensaje
+        move = screen.pushAndCome(suma=primero,options = len(filas))                                         # Espera una tecla
+        if move == "98":                                                    # Si la tecla es "98"
+            if primero > 0:                                                 # Si la primera fila es mayor que 0
+                primero -= 1                                                # Disminuye la primera fila
+        elif move == "99":                                                  # Si la tecla es "99"
+            if primero < len(filas) - lineas - 1:                           # Si la primera fila es menor que la cantidad de filas menos las que se deben mostrar
+                primero += 1                                                # Aumenta la primera fila
+        else:                                                               # Si no
+            in_function = False                                             # Sale del bucle
+    return move                                                             # Sale de la función
 
 def preparaListaTablas():
     
@@ -1543,40 +1738,55 @@ def preparaListaTablas():
     
     return listado,carpeta
 
-def listaTablas(listado):
-                                                
-    if len(listado)<3:
+def listaTablas(listado):                                                   # Muestra las tablas
+    
+    mensajeConPausa("Elige opción\nCursores mueve lista",
+                    False,False)                                            # Muestra un mensaje
+    posicion = 0                                                            # Inicializa la variable
+    numeracion = 1                                                          # Inicializa la variable
+    in_function = True                                                      # Inicializa la variable
+    while in_function:                                                      # Bucle de la función
         
-        screen.paper(150,300,5)
-        
-    else:
-        
-        screen.paper(150,300,len(listado)+5)
-        
-    todas_tablas = ["Listado de tablas"]
-    numeracion = 1
-    for i in listado:
-        
-        todas_tablas.append(str(numeracion) +" - " + str(i))
-        numeracion += 1
-        
-    screen.text(250,500,todas_tablas)
-    screen.updateScreen()
-     
-    return
+        screen.paper(51,100,12,False)                                             # Pone el papel en pantalla
+        todas_tablas = ["Listado de tablas"]                            
+        lista_corta = listado[posicion:posicion+7]                          # Coge las primeras 7 tablas
+        for i in lista_corta:
+            
+            if len(i)>20:
+                a = i[:20]
+                a = a + "..."
+            else:
+                a = i
+            todas_tablas.append(str(numeracion) +" - " + a)
+            numeracion += 1
+            
+        screen.text(150,300,todas_tablas,False)
+        screen.updateScreen()     
+        time.sleep(0.1)
+        pulsacion = screen.pushAndCome(suma=posicion,options = 7)                                    # Espera una tecla
+        if pulsacion == "98":
+            if posicion > 0:                                                # Si la tecla es "98" y la posición es mayor que 0
+                posicion -= 1                                               # Disminuye la posición
+            numeracion = posicion+1
+        elif pulsacion == "99":
+            if posicion < len(listado) - 7:                                 # Si da cursor abajo y la posición es menor que la cantidad de tablas menos 7
+                posicion += 1                                               # Aumenta la posición
+            numeracion = posicion+1
+        else:                                                               # Si no
+            in_function = False                                             # Sale del bucle
+    return pulsacion
               
 def modificaTabla():                                            
     
     in_function = True
     while in_function:
         
-        tabla_a_modificar = consultaTabla()   
+        tabla_a_modificar,id_seleccionado = consultaTabla()   
+        if tabla_a_modificar == "":
+            
+            in_function = False
+            break
                 
-        screen.paper(1000,400,3,2)
-        screen.textAlone(450,1100,f"Elige el ID de la linea a modificar:")
-        screen.updateScreen()
-        id_seleccionado = screen.AnswerChain([1400,1100,200,40],4)
-        
         if id_seleccionado == "0":
             
             in_function = False
@@ -1598,8 +1808,11 @@ def modificaTabla():
             parametros = (linea,)
             fila = sql.DevuelveConsulta(cursor,sentencia,parametros)
             
-            datos_a_pintar = [f"Modificando una tabla",f"Nombre: {tabla}","",f"De: {fila[1]}",
-                            f"A: {fila[2]}",f"Euros/palabra: {fila[3]}"]
+            datos_a_pintar = [f"Modificando una tabla",
+                              f"Nombre: {tabla}",
+                              "",f"De: {fila[1]}",
+                              f"A: {fila[2]}",
+                              f"Euros/palabra: {fila[3]}"]
         
         except:
             
@@ -1608,18 +1821,25 @@ def modificaTabla():
             in_function = False
             break
         
-        mensajeConPausa("Introduce datos (en blanco, mantiene antiguo)")
+        mensajeConPausa("Introduce datos\nEn blanco mantiene valor\nESC para anular",
+                    False,False) 
         
-        screen.paper(150,1200,6,2)
-        posicion = 225
+        screen.paper(50,700,6,2)
+        posicion = 224
         for i in datos_a_pintar:
             
-            screen.textAlone(1400,posicion,i)
-            posicion += 49
+            screen.textAlone(900,posicion,i)
+            posicion += 49 
             
         screen.updateScreen()
         
         tabla_tupla = cuestionarioTabla()
+        if "acción anulada" in tabla_tupla:
+            screen.SoundKillData()
+            mensajeConPausa("Acción anulada")        
+            in_function = False
+            break
+        
         tabla = list(tabla_tupla)
         
         for i in range(len(tabla)):
@@ -1637,10 +1857,7 @@ def modificaTabla():
             sql.Modificar(cursor,sentencia,parametros)
             sql.CierraBd(conexion)
                 
-            lista_tablas, carpeta = preparaListaTablas()
-            listaTablas(lista_tablas)
-                
-            mensajeConPausa("Tabla modificada con éxito")
+            mensajeConPausa("Tabla modificada")
             
         except:
             
@@ -1660,69 +1877,69 @@ def eliminaTabla():
         try:
             
             nombres,carpeta = preparaListaTablas()                                            
-            listaTablas(nombres)   
+            id_seleccionado = listaTablas(nombres)   
                                                      
         except:
             
-            screen.paper(1000,600,3,2)
-            screen.textAlone(950,1159,"No hay tablas")
-            screen.updateScreen()
-            time.sleep(2)
-            screen.paper(1000,600,3,2)
+            mensajeConPausa("No hay tablas")
             in_function = False                                         
             
-        screen.paper(1000,600,3,2)
-        screen.textAlone(950,1100,f"Elige el ID de la tabla a borrar:")                                         
-        screen.updateScreen()
-        id_seleccionado = screen.AnswerChain([1600,1100,200,40],4)
-        
-        screen.textAlone(950,1159,f"¿Quieres eliminar la tabla {id_seleccionado}? (S/N): ")                                         
-        screen.updateScreen()
-        respuesta = screen.pushAndCome()
+        if id_seleccionado == "0":
+                    
+                    in_function = False
+                    break
+                
+        mensajeConPausa(f"¿Eliminar la tabla {id_seleccionado}?\n(S/N)",False,False)                                         
+        stay = True
+        while stay:
+            respuesta = screen.pushAndCome(options = 0)
 
-        if respuesta.upper() == "S":   
-                                                                                                                     
-            try:  
-                                                                                  
-                conexion,cursor = sql.creaAbreBd(carpeta)                                                   
-                consulta = "SELECT name FROM sqlite_master WHERE type='table';"                         
-                listado = sql.listados(cursor,consulta)                                          
-                tabla = listado[int(id_seleccionado)-1]                                                   
-                sql.eliminaTabla(cursor,tabla)                                                  
-                sql.CierraBd(conexion)                    
-                screen.SoundKillData()
-                mensajeConPausa("Tabla eliminada con éxito")
-                nombres, carpeta = preparaListaTablas()                                            
-                listaTablas(nombres)  
-                                                          
-            except:
+            if respuesta.upper() == "S":   
+                stay = False                                                                                                        
+                try:  
+                                                                                    
+                    conexion,cursor = sql.creaAbreBd(carpeta)                                                   
+                    consulta = "SELECT name FROM sqlite_master WHERE type='table';"                         
+                    listado = sql.listados(cursor,consulta)                                          
+                    tabla = listado[int(id_seleccionado)-1]                                                   
+                    sql.eliminaTabla(cursor,tabla)                                                  
+                    sql.CierraBd(conexion)                    
+                    screen.SoundKillData()
+                    mensajeConPausa("Tabla eliminada con éxito")
+                                                            
+                except:
+                    
+                    screen.SoundWrongAnswer()
+                    mensajeConPausa("Error al borrar la tabla")
+            elif respuesta.upper() == "N":
+                mensajeConPausa("No se eliminó\nla tabla")
                 
-                screen.SoundWrongAnswer()
-                mensajeConPausa("Error al borrar la tabla")
-                
-        screen.paper(1000,600,3,2)
+                stay = False    
         in_function = False                                                                  
 
     return                                           
 
 def exit(): 
                                                         
+    screen.animaLogo(1)
     screen.fadeOut()                                                
     sys.exit()                              
 
-def mensajeConPausa(mensaje):
+def mensajeConPausa(mensaje,pause = True,borra = True):
     
-    screen.paper(1000,600,3,2)
-    screen.textAlone(960,1159,mensaje)
+    screen.paper(1000,100,3,0)
+    screen.textAlone(300,1100,mensaje)
     screen.updateScreen()
-    time.sleep(2)
-    screen.paper(1000,600,3,2)
-    screen.updateScreen()
+    if pause:
+        time.sleep(2)
+    if borra:
+        screen.paper(1000,100,3,0)
+        screen.updateScreen()
                                 
 if __name__ == "__main__":                                      
     
     screen.run()
     comprobarExistenciaCarpeta()
     screen.fadeIn()
-    screen.animaLogoEntra()    
+    screen.animaLogo()    
     menuInicial()    

@@ -7,16 +7,15 @@ import  random
 import  errores
 import  mates
 
-class Game:
-    def __init__(self):
+class Game:                                                                 # Clase Game
+    def __init__(self):                                                     # Inicia la clase game
         
         pygame.init()
 
         
         screen_info = pygame.display.Info()
         self.width, self.height = screen_info.current_w, screen_info.current_h
-        # self.width = 2000
-        self.height = (self.width*1440)/3440
+        self.height = int((self.width*1440)/3440)
         
         self.screen = pygame.display.set_mode((self.width, self.height),)# pygame.FULLSCREEN)
 
@@ -34,29 +33,26 @@ class Game:
         self.paper_sup = pygame.image.load("EXTRAS/hoja_superior.png")
         self.paper_mid = pygame.image.load("EXTRAS/hoja_media.png")
         self.paper_down = pygame.image.load("EXTRAS/hoja_inferior.png")
-        self.paper_sup_2 = pygame.image.load("EXTRAS/hoja_superior_2.png")
-        self.paper_mid_2 = pygame.image.load("EXTRAS/hoja_media_2.png")
-        self.paper_down_2 = pygame.image.load("EXTRAS/hoja_inferior_2.png")
-         
+
+        self.paper_sup_3 = pygame.image.load("EXTRAS/hoja_superior_3.png")
+        self.paper_mid_3 = pygame.image.load("EXTRAS/hoja_media_3.png")
+        self.paper_down_3 = pygame.image.load("EXTRAS/hoja_inferior_3.png")
+     
         self.paper_sup = pygame.transform.scale(self.paper_sup, (int((self.width*664)/3440), int((self.height*116)/1440)))
         self.paper_mid = pygame.transform.scale(self.paper_mid, (int((self.width*664)/3440), int((self.height*71)/1440)))
         self.paper_down = pygame.transform.scale(self.paper_down, (int((self.width*664)/3440), int((self.height*145)/1440)))
         
-        #self.paper_sup_big = pygame.transform.scale(self.paper_sup, (int((self.width*800)/3440), int((self.height*116)/1440)))
-        #self.paper_mid_big = pygame.transform.scale(self.paper_mid, (int((self.width*800)/3440), int((self.height*71)/1440)))
-        #self.paper_down_big = pygame.transform.scale(self.paper_down, (int((self.width*800)/3440), int((self.height*145)/1440)))
-        
-        self.paper_sup_super_big = pygame.transform.scale(self.paper_sup_2, (int((self.width*1500)/3440), int((self.height*116)/1440)))
-        self.paper_mid_super_big = pygame.transform.scale(self.paper_mid_2, (int((self.width*1500)/3440), int((self.height*71)/1440)))
-        self.paper_down_super_big = pygame.transform.scale(self.paper_down_2, (int((self.width*1500)/3440), int((self.height*145)/1440)))
+        self.paper_sup_super_big = pygame.transform.scale(self.paper_sup_3, (int((self.width*2500)/3440), int((self.height*116)/1440)))
+        self.paper_mid_super_big = pygame.transform.scale(self.paper_mid_3, (int((self.width*2500)/3440), int((self.height*71)/1440)))
+        self.paper_down_super_big = pygame.transform.scale(self.paper_down_3, (int((self.width*2500)/3440), int((self.height*145)/1440)))
         
         self.paper_graph = pygame.image.load("EXTRAS/hoja_de_grafica.png") 
         self.paper_graph = pygame.transform.scale(self.paper_graph, (int((self.width*1331)/3440), int((self.height*1400)/1440)))  
         
         self.logo = pygame.image.load("EXTRAS/logo.png")
-        self.logo = pygame.transform.scale(self.logo, ((self.width*177)/3440, (self.height*185)/1440))
+        self.logo = pygame.transform.scale(self.logo, (int((self.width*177)/3440), int((self.height*185)/1440)))
         self.logoBig = pygame.image.load("EXTRAS/logo_traducon.png").convert_alpha()
-        self.logoBig = pygame.transform.scale(self.logoBig, ((self.width*669)/3440, (self.height*609)/1440))
+        self.logoBig = pygame.transform.scale(self.logoBig, (int((self.width*669)/3440), int((self.height*609)/1440)))
 
         
         self.font_1 = pygame.font.Font("EXTRAS/JMH Typewriter-Bold.ttf", int((self.width*30)/3440))
@@ -80,37 +76,29 @@ class Game:
          
         
         self.logo_origen = self.width+int((self.width*100)/3440)
-        self.logo_destino = int((self.width/10)*9)
+        self.logo_destino = int((self.width/15)*14)
                 
-    def run(self):
-        
-        while True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    
-                    pygame.quit()
-                    sys.exit()
+    def run(self):                                                          # Pone en pantalla la clase game
 
-            
-            self.screen.blit(self.background_image, (0, 0))
-
-            
-            self.updateScreen()
-    
-            return
+        self.updateScreen()                                                 # Actualizamos la pantalla
+        return                                                              # Salimos de la función
         
-    def updateScreen(self):
+    def updateScreen(self):                                                 # Actualiza los datos en patalla de la clase
         pygame.display.flip()
         
-    def paper(self,altura,anchura,trozos,que_es = 0):
+    def paper(self,altura,anchura,trozos,que_es = 0):                       # Pone en pantalla una hoja de papel
         self.pass_page.play()
         
+        originAlt = altura
         altura = int((self.width*altura)/3440)
         anchura = int((self.height*anchura)/1440)
 
         for i in range(trozos):
             if i == 0:
                 if que_es == 0:
+                    if originAlt == 50:
+                        self.screen.blit(self.background_image,(0,0))
+                        self.screen.blit(self.logo, self.image_rect)
                     self.screen.blit(self.paper_sup, (anchura, altura))
                 elif que_es == 2:
                     self.screen.blit(self.paper_sup_super_big, (anchura, altura))                    
@@ -133,9 +121,9 @@ class Game:
                     self.screen.blit(self.paper_mid_big, (anchura, altura))
             altura += int((self.height*71)/1440)
 
-    def paperGraph(self,proyectoSinExt,Datos,Procesos,Excepciones):
+    def paperGraph(self,proyectoSinExt,Datos,Procesos,Excepciones):         
         
-        self.screen.blit(self.paper_graph, ( self.width-int((self.width*1400)/3440), self.height-(int((self.height*1250)/1440)) ) )
+        self.screen.blit(self.paper_graph, (int((self.width*700)/3440), (int((self.height*50)/1440)) ) ) # Pone en pantalla la hoja de gráfica
         
         
         listaDeDatos = self.calculaDatosGrafica(proyectoSinExt,Datos,Procesos,Excepciones)
@@ -143,8 +131,8 @@ class Game:
         
         for i in listaDeDatos: 
             texto_escribe = i[3].render(i[0], True, (0,50,150))    
-            ancho = self.width-int((self.width*i[1])/3440)
-            alto = self.height-int((self.height*i[2])/1440)
+            ancho = int((self.width*i[1])/3440)
+            alto = int((self.height*i[2])/1440)
             text_rect = texto_escribe.get_rect(left=ancho, centery = alto)
             self.screen.blit(texto_escribe, text_rect)
                                 
@@ -170,57 +158,57 @@ class Game:
         try:    
             NumeroPaginasPendientes     = int(NumeroPaginasOriginales) - int(NumeroPaginasTraducidas)       
         except:
-            NumeroPaginasPendientes = " --- "
+            NumeroPaginasPendientes = "---"
         try:    
             NumeroPaginasPorRevisar     = int(NumeroPaginasOriginales) - int(NumeroPaginasRevisadas)
         except:
-            NumeroPaginasPorRevisar = " --- "
+            NumeroPaginasPorRevisar = "---"
         
         FechaInicioProyecto         = Datos[0][3]
         
         try:
             FechaInicioProyectoSuma     = datetime.strptime(FechaInicioProyecto, "%d/%m/%y")
         except:
-            FechaInicioProyectoSuma = " --- "
+            FechaInicioProyectoSuma = "---"
         FechaActual                 = datetime.now()
         try:
             FechaActual                 = FechaActual.strftime("%d/%m/%y")
         except:
-            FechaActual = " --- "
+            FechaActual = "---"
         try:
             FechaActualSuma             = datetime.strptime(FechaActual, "%d/%m/%y")
         except:
-            FechaActualSuma = " --- "
+            FechaActualSuma = "---"
         FechaEntrega                = Datos[0][4]   
         try:
             FechaEntregaSuma            = datetime.strptime(FechaEntrega, "%d/%m/%y")
         except:
-            FechaEntregaSuma = " --- "
+            FechaEntregaSuma = "---"
         try:
             DiasRestantes               = FechaEntregaSuma - FechaActualSuma
         except:
-            DiasRestantes = " --- "
+            DiasRestantes = "---"
             
         try:
             DiasRestantes               = (DiasRestantes.days)+1
         except:
-            DiasRestantes = " --- "
+            DiasRestantes = "---"
         try:
             DiasParaProyecto            = FechaEntregaSuma - FechaInicioProyectoSuma  
         except:
-            DiasParaProyecto = " --- "
+            DiasParaProyecto = "---"
         try:
             DiasParaProyecto            = DiasParaProyecto.days
         except:
-            DiasParaProyecto = " --- "
+            DiasParaProyecto = "---"
         try:
             DiasYaPasados               = FechaActualSuma - FechaInicioProyectoSuma
         except:
-            DiasYaPasados = " --- "
+            DiasYaPasados = "---"
         try:
             DiasYaPasados               = DiasYaPasados.days      
         except:
-            DiasYaPasados = " --- "
+            DiasYaPasados = "---"
         try:    
             DiasExentos                 = len(Excepciones)
             for Excepcion in Excepciones:
@@ -228,37 +216,37 @@ class Game:
                 try:
                     FechaExcepcionSuma = datetime.strptime(FechaExcepcion, "%d/%m/%y")
                 except:
-                    FechaExcepcionSuma = " --- "
+                    FechaExcepcionSuma = "---"
                 if FechaExcepcionSuma < FechaActualSuma:
                     DiasExentos -= 1
         except:
-            DiasExentos = " --- "
+            DiasExentos = "---"
         try:
             DiasPosibles                = FechaEntregaSuma - FechaInicioProyectoSuma
         except:
-            DiasPosibles = " --- "
+            DiasPosibles = "---"
         try:
             DiasPosibles                = (DiasPosibles.days)+1
         except:
-            DiasPosibles = " --- "
+            DiasPosibles = "---"
         try:
             DiasReales                  = DiasRestantes - DiasExentos
         except:
-            DiasReales = " --- "
+            DiasReales = "---"
         TantoCientoParaRevision     = Datos[0][13]
         try:
             TantoCientoParaTraduccion   = 100 - TantoCientoParaRevision
         except:
-            TantoCientoParaTraduccion = " --- "
+            TantoCientoParaTraduccion = "---"
         DiasYaDedicadosRevision     = 0
         try:
             DiasProyectoEnMarcha        = FechaActualSuma - FechaInicioProyectoSuma
         except:
-            DiasProyectoEnMarcha = " --- "
+            DiasProyectoEnMarcha = "---"
         try:
             DiasProyectoEnMarcha        = DiasProyectoEnMarcha.days
         except:
-            DiasProyectoEnMarcha = " --- "
+            DiasProyectoEnMarcha = "---"
         for Proceso in Procesos:
             if Proceso[3] == "R": 
                 DiasYaDedicadosRevision += 1
@@ -289,32 +277,32 @@ class Game:
         try:
             DiasADedicarTrad = DiasReales * TantoCientoParaTraduccion / 100
         except:
-            DiasADedicarTrad = " --- "
+            DiasADedicarTrad = "---"
         try:
             DiasADedicarTrad = mates.redondea(DiasADedicarTrad,2)
         except:
-            DiasADedicarTrad = " --- "
+            DiasADedicarTrad = "---"
         try:
             DiasADedicarRev  = DiasReales * TantoCientoParaRevision / 100
         except:
-            DiasADedicarRev = " --- "
+            DiasADedicarRev = "---"
         try:
             DiasADedicarRev  = mates.redondea(DiasADedicarRev,2)
         except:
-            DiasADedicarRev = " --- "
+            DiasADedicarRev = "---"
             
         try:
             PorcientoRevisionReal       = DiasYaDedicadosRevision * 100 / DiasPosibles
         except:
-            PorcientoRevisionReal = " --- "
+            PorcientoRevisionReal = "---"
         try:
             PorcientoTraduccionReal     = DiasYaDedicadosTraduccion * 100 / DiasPosibles
         except:
-            PorcientoTraduccionReal = " --- "
+            PorcientoTraduccionReal = "---"
         try:
             PorcientoMixtoReal          = DiasDedicadosAmbos * 100 / DiasPosibles
         except: 
-            PorcientoMixtoReal = " --- "
+            PorcientoMixtoReal = "---"
         PaginasRevisadas            = 0
         for Proceso in Procesos:
             if Proceso[3] == "R": 
@@ -322,259 +310,369 @@ class Game:
         try:
             PaginasTraduceAlDiaDesdeHoy = NumeroPaginasPendientes/DiasReales
         except: 
-            PaginasTraduceAlDiaDesdeHoy = " --- "
+            PaginasTraduceAlDiaDesdeHoy = "---"
         try:
             PaginasTraduceAlDiaDesdeHoy  = mates.redondea(PaginasTraduceAlDiaDesdeHoy,0)
         except:
-            PaginasTraduceAlDiaDesdeHoy = " --- "
+            PaginasTraduceAlDiaDesdeHoy = "---"
         try:
             PaginasRevisaAlDiaDesdeHoy = NumeroPaginasPorRevisar/DiasReales
         except:
-            PaginasRevisaAlDiaDesdeHoy = " --- "
+            PaginasRevisaAlDiaDesdeHoy = "---"
         try:
             PaginasRevisaAlDiaDesdeHoy = mates.redondea(PaginasRevisaAlDiaDesdeHoy,0)
         except:
-            PaginasRevisaAlDiaDesdeHoy = " --- "         
+            PaginasRevisaAlDiaDesdeHoy = "---"         
         try:
             PaginasTraduceAlDiaDesdeMan = NumeroPaginasPendientes/(DiasReales-1)
         except:
-            PaginasTraduceAlDiaDesdeMan = " --- "
+            PaginasTraduceAlDiaDesdeMan = "---"
         try:    
             PaginasTraduceAlDiaDesdeMan = mates.redondea(PaginasTraduceAlDiaDesdeMan,0)
         except:
-            PaginasTraduceAlDiaDesdeMan = " --- "
+            PaginasTraduceAlDiaDesdeMan = "---"
         try:
             PaginasRevisaAlDiaDesdeMan = NumeroPaginasPorRevisar/(DiasReales-1)
         except:
-            PaginasRevisaAlDiaDesdeMan = " --- "  
+            PaginasRevisaAlDiaDesdeMan = "---"  
         try:
             PaginasRevisaAlDiaDesdeMan = mates.redondea(PaginasRevisaAlDiaDesdeMan,0)
         except:
-            PaginasRevisaAlDiaDesdeMan = " --- "  
+            PaginasRevisaAlDiaDesdeMan = "---"  
         tituloLargo = ("Proyecto de "+TipoDeConteo+" "+proyectoSinExt)
         todasLasFechas = "Inicio: "+FechaInicioProyecto+" - Hoy: "+ FechaActual +" - Entrega: "+FechaEntrega
         
         
-        listaDeDatos.append([tituloLargo,1200,1050,self.font_2])
-        listaDeDatos.append([todasLasFechas,1200,975,self.font_2])
-        listaDeDatos.append(["      Páginas",1200,900,self.font_2])
-        listaDeDatos.append(["Totales:",1200,825,self.font_2])
-        listaDeDatos.append([str(NumeroPaginasOriginales),990,825,self.font_2])
+        listaDeDatos.append([tituloLargo,900,250,self.font_2])
+        listaDeDatos.append([todasLasFechas,900,325,self.font_2])
+        listaDeDatos.append(["Páginas",900,400,self.font_2])
+        listaDeDatos.append(["Totales:",900,475,self.font_2])
+        listaDeDatos.append([str(NumeroPaginasOriginales),1110,475,self.font_2])
         if Datos[0][7] == "T":
-            listaDeDatos.append(["Traducidas: ",1200,725,self.font_2])
+            listaDeDatos.append(["Traducidas: ",900,575,self.font_2])
         else:
-            listaDeDatos.append(["Corregidas: ",1200,725,self.font_2])
-        listaDeDatos.append([str(NumeroPaginasTraducidas),990,725,self.font_2])
+            listaDeDatos.append(["Corregidas: ",900,575,self.font_2])
+        listaDeDatos.append([str(NumeroPaginasTraducidas),1110,575,self.font_2])
         if Datos[0][7] == "T":
-            listaDeDatos.append(["Por trad.: ",1200,675,self.font_2])
+            listaDeDatos.append(["Por trad.: ",900,625,self.font_2])
         else:
-            listaDeDatos.append(["Por corr.: ",1200,675,self.font_2])
-        listaDeDatos.append([str(NumeroPaginasPendientes),990,675,self.font_2])
-        listaDeDatos.append(["Revisadas: ",1200,575,self.font_2])
-        listaDeDatos.append([str(NumeroPaginasRevisadas),990,575,self.font_2])
-        listaDeDatos.append(["Por revisar: ",1200,525,self.font_2])
-        listaDeDatos.append([str(NumeroPaginasPorRevisar),990,525,self.font_2])
+            listaDeDatos.append(["Por corr.: ",900,625,self.font_2])
+        listaDeDatos.append([str(NumeroPaginasPendientes),1110,625,self.font_2])
+        listaDeDatos.append(["Revisadas: ",900,725,self.font_2])
+        listaDeDatos.append([str(NumeroPaginasRevisadas),1110,725,self.font_2])
+        listaDeDatos.append(["Por revisar: ",900,775,self.font_2])
+        listaDeDatos.append([str(NumeroPaginasPorRevisar),1110,775,self.font_2])
         
-        listaDeDatos.append(["          Días",900,900,self.font_2])
-        listaDeDatos.append(["Totales: ",900,825,self.font_2])
-        listaDeDatos.append([str(DiasPosibles),585,825,self.font_2])
-        listaDeDatos.append(["Pasados: ",900,775,self.font_2])
-        listaDeDatos.append([str(DiasYaPasados),585,775,self.font_2])
-        listaDeDatos.append(["Restantes: ",900,725,self.font_2])
-        listaDeDatos.append([str(DiasRestantes),585,725,self.font_2])
-        listaDeDatos.append(["Exentos: ",900,675,self.font_2])
-        listaDeDatos.append([str(DiasExentos),585,675,self.font_2])
-        listaDeDatos.append(["Reales: ",900,625,self.font_2])
-        listaDeDatos.append([str(DiasReales),585,625,self.font_2])
+        listaDeDatos.append(["Días",1200,400,self.font_2])
+        listaDeDatos.append(["Totales: ",1200,475,self.font_2])
+        listaDeDatos.append([str(DiasPosibles),1512,475,self.font_2])
+        listaDeDatos.append(["Pasados: ",1200,525,self.font_2])
+        listaDeDatos.append([str(DiasYaPasados),1512,525,self.font_2])
+        listaDeDatos.append(["Restantes: ",1200,575,self.font_2])
+        listaDeDatos.append([str(DiasRestantes),1512,575,self.font_2])
+        listaDeDatos.append(["Exentos: ",1200,625,self.font_2])
+        listaDeDatos.append([str(DiasExentos),1512,625,self.font_2])
+        listaDeDatos.append(["Reales: ",1200,675,self.font_2])
+        listaDeDatos.append([str(DiasReales),1512,675,self.font_2])
         if Datos[0][7] == "T":
-            listaDeDatos.append(["Dedic. T. desde hoy:",900,575,self.font_2])
+            listaDeDatos.append(["Dedic. T. desde hoy:",1200,725,self.font_2])
         else:
-            listaDeDatos.append(["Dedic. C. desde hoy:",900,575,self.font_2])
-        listaDeDatos.append([str(DiasADedicarTrad),585,575,self.font_2])
-        listaDeDatos.append(["Dedic. R. desde hoy:",900,525,self.font_2])
-        listaDeDatos.append([str(DiasADedicarRev),585,525,self.font_2])
-        listaDeDatos.append(["Tradujiste:",900,475,self.font_2])
-        listaDeDatos.append([str(DiasYaDedicadosTraduccion),585,475,self.font_2])
-        listaDeDatos.append(["Revisaste:",900,425,self.font_2])
-        listaDeDatos.append([str(DiasYaDedicadosRevision),585,425,self.font_2])
-        listaDeDatos.append(["Ambos:",900,375,self.font_2])
-        listaDeDatos.append([str(DiasDedicadosAmbos),585,375,self.font_2])
+            listaDeDatos.append(["Dedic. C. desde hoy:",1200,725,self.font_2])
+        listaDeDatos.append([str(DiasADedicarTrad),1512,725,self.font_2])
+        listaDeDatos.append(["Dedic. R. desde hoy:",1200,775,self.font_2])
+        listaDeDatos.append([str(DiasADedicarRev),1512,775,self.font_2])
+        listaDeDatos.append(["Tradujiste:",1200,825,self.font_2])
+        listaDeDatos.append([str(DiasYaDedicadosTraduccion),1512,825,self.font_2])
+        listaDeDatos.append(["Revisaste:",1200,875,self.font_2])
+        listaDeDatos.append([str(DiasYaDedicadosRevision),1512,875,self.font_2])
+        listaDeDatos.append(["Ambos:",1200,925,self.font_2])
+        listaDeDatos.append([str(DiasDedicadosAmbos),1512,925,self.font_2])
         
-        listaDeDatos.append(["Tanto % sobre días",490,900,self.font_2])
+        listaDeDatos.append(["Tanto % sobre días",1605,400,self.font_2])
         if Datos[0][7] == "T":
-            listaDeDatos.append(["Trad. Objetivo:",490,825,self.font_2])
+            listaDeDatos.append(["Trad. Objetivo:",1605,475,self.font_2])
         else:
-            listaDeDatos.append(["Corr. Objetivo:",490,825,self.font_2])
+            listaDeDatos.append(["Corr. Objetivo:",1605,475,self.font_2])
         try:
-            listaDeDatos.append([str(int(TantoCientoParaTraduccion))+"%",190,825,self.font_2])
+            listaDeDatos.append([str(int(TantoCientoParaTraduccion))+"%",1902,475,self.font_2])
         except:
-            listaDeDatos.append([" --- ",190,825,self.font_2])
+            listaDeDatos.append(["---",1902,475,self.font_2])
             
-        listaDeDatos.append(["Rev. Objetivo:",490,775,self.font_2])
+        listaDeDatos.append(["Rev. Objetivo:",1605,525,self.font_2])
         try:
-            listaDeDatos.append([str(int(TantoCientoParaRevision))+"%",190,775,self.font_2])
+            listaDeDatos.append([str(int(TantoCientoParaRevision))+"%",1902,525,self.font_2])
         except:
-            listaDeDatos.append([" --- ",190,775,self.font_2])
+            listaDeDatos.append(["---",1902,525,self.font_2])
         if Datos[0][7] == "T":
-            listaDeDatos.append(["Traduc. Real:",490,675,self.font_2])
+            listaDeDatos.append(["Traduc. Real:",1605,625,self.font_2])
         else:
-            listaDeDatos.append(["Correg. Real:",490,675,self.font_2])
+            listaDeDatos.append(["Correg. Real:",1605,625,self.font_2])
         try:
-            listaDeDatos.append([str(int(PorcientoTraduccionReal))+"%",190,675,self.font_2])
+            listaDeDatos.append([str(int(PorcientoTraduccionReal))+"%",1902,625,self.font_2])
         except:
-            listaDeDatos.append([" --- ",190,675,self.font_2])
-        listaDeDatos.append(["Revisión Real:",490,625,self.font_2])
+            listaDeDatos.append(["---",902,625,self.font_2])
+        listaDeDatos.append(["Revisión Real:",1605,675,self.font_2])
         try:
-            listaDeDatos.append([str(int(PorcientoRevisionReal))+"%",190,625,self.font_2])
+            listaDeDatos.append([str(int(PorcientoRevisionReal))+"%",1902,675,self.font_2])
         except:
-            listaDeDatos.append([" --- ",190,625,self.font_2])
-        listaDeDatos.append(["Mixto Real:",490,575,self.font_2])
+            listaDeDatos.append(["---",1902,675,self.font_2])
+        listaDeDatos.append(["Mixto Real:",1605,725,self.font_2])
         try:
-            listaDeDatos.append([str(int(PorcientoMixtoReal))+"%",190,575,self.font_2])
+            listaDeDatos.append([str(int(PorcientoMixtoReal))+"%",1902,725,self.font_2])
         except:
-            listaDeDatos.append([" --- ",190,575,self.font_2])
+            listaDeDatos.append(["---",1902,725,self.font_2])
             
-        listaDeDatos.append([" Pág. trad/rev a partir de hoy: "+str(PaginasTraduceAlDiaDesdeHoy)+" / "+str(PaginasRevisaAlDiaDesdeHoy),1200,250,self.font_3])
-        listaDeDatos.append([" Pág, trad/rev a partir mañana: "+str(PaginasTraduceAlDiaDesdeMan)+" / "+str(PaginasRevisaAlDiaDesdeMan) ,1200,180,self.font_3])
+        listaDeDatos.append([" Pág. trad/rev a partir de hoy: "+str(PaginasTraduceAlDiaDesdeHoy)+" / "+str(PaginasRevisaAlDiaDesdeHoy),900,1065,self.font_3])
+        listaDeDatos.append([" Pág, trad/rev a partir mañana: "+str(PaginasTraduceAlDiaDesdeMan)+" / "+str(PaginasRevisaAlDiaDesdeMan) ,900,1115,self.font_3])
         
         return listaDeDatos
         
-    def text(self,altura,anchura,textos):
+    def text(self,altura,anchura,textos,aviso = True):                                   # Pone en pantalla los textos enviados
         
         altura = int((self.width*altura)/3440)
         anchura = int((self.height*anchura)/1440)
         
-        textos.insert(1,"")
         textos.insert(1,"0 - Salir")
+        textos.insert(1,"")
         
         
-        textos.append("")
-        textos.append("Elige una opción")
+        if aviso:
+            textos.append("")
+            textos.append("Elige una opción")
                 
         num_bucle = 0
         
         for i in textos:
+            
+            textitos = i.split("\n")
+            
             if num_bucle == 0:
-                texto_escribe = self.font_1.render(i, True, (255, 0, 0))
-            elif num_bucle == 1:
-                texto_escribe = self.font_2.render(i, True, (0, 200, 100))
-            elif num_bucle == len(textos)-1:
-                texto_escribe = self.font_2.render(i, True, (0, 0, 255))
+                circunstancia = altura
+                for a in textitos:
+                    texto_escribe = self.font_1.render(a, True, (255, 0, 0))
+                    text_rect = texto_escribe.get_rect(left= anchura, centery = altura)
+                    self.screen.blit(texto_escribe, text_rect)
+                    altura += int((self.height*40+21)/1440)
+                altura = circunstancia+int(self.height*71/1440)
             else:
-                texto_escribe = self.font_2.render(i, True, (0, 0, 0))
-            text_rect = texto_escribe.get_rect(left= anchura, centery = altura)
-            self.screen.blit(texto_escribe, text_rect)
-            altura += int((self.height*71)/1440)
+                if num_bucle == 2:
+                    texto_escribe = self.font_2.render(i, True, (0, 200, 100))
+                elif num_bucle == len(textos)-1 and aviso:
+                    texto_escribe = self.font_2.render(i, True, (0, 0, 255))
+                else:
+                    texto_escribe = self.font_2.render(i, True, (0, 0, 0))
+                text_rect = texto_escribe.get_rect(left= anchura, centery = altura)
+                self.screen.blit(texto_escribe, text_rect)
+                altura += int((self.height*71)/1440)
             num_bucle += 1
     
-    def textAlone(self,altura,anchura,texto): 
-        altura = int((self.width*altura)/3440)
-        anchura = int((self.height*anchura)/1440)
+    def textAlone(self,anchura,altura,texto): 
+        anchura = int((self.width*anchura)/3440)
+        altura = int((self.height*altura)/1440)
         
-        texto_escribe = self.font_2.render(texto, True, (0, 0, 200))
-        text_rect = texto_escribe.get_rect(left= altura, centery = anchura)
-        self.screen.blit(texto_escribe, text_rect)
+        textos = texto.split("\n")
+        for texto in textos:
+            texto_escribe = self.font_2.render(texto, True, (0, 0, 200))
+            text_rect = texto_escribe.get_rect(left= anchura, centery = altura)
+            altura += 30
+            self.screen.blit(texto_escribe, text_rect)
         
-    def animaLogoEntra(self):
+    def animaLogo(self,direccion = 0):                                      # Anima la entrada del logo
 
-        
-        start_point = (self.logo_origen, int((self.height*150)/1440))
-        end_point = (self.logo_destino, int((self.height*150)/1440))
-
-        
-        direction = (end_point[0] - start_point[0], end_point[1] - start_point[1])
-
-        
-        length = pygame.math.Vector2(direction).length()
-        direction_normalized = (direction[0] / length, direction[1] / length)
-
-        
-        image_rect = self.logo.get_rect(center=start_point)
-
-        
-        speed = 40
-        
-        cotejo = True
-        while cotejo:
-           
+        if direccion == 0:                                                  # Si la dirección es 0
+            self.start_point = (self.logo_origen, 
+                                int((self.height*150)/1440))                # Punto de inicio
+            self.end_point = (self.logo_destino, 
+                              int((self.height*150)/1440))                  # Punto de destino
+            self.direction = (self.end_point[0] - self.start_point[0], 
+                        self.end_point[1] - self.start_point[1])            # Dirección
+            self.length = pygame.math.Vector2(self.direction).length()      # Longitud
+            self.direction_normalized = (self.direction[0] / 
+                                    self.length, self.direction[1] / 
+                                    self.length)                            # Dirección normalizada
+            self.image_rect = self.logo.get_rect(center=self.start_point)   # Rectángulo de la imagen
+            self.speed = 40                                                 # Velocidad
+        else:                                                               # Si la dirección es 1
+            self.start_point, self.end_point = self.end_point, self.start_point # Intercambiamos los puntos
+        cotejo = True                                                       # Bucle de cotejo
+        while cotejo:                                                       # Mientras cotejo sea True
             
-            image_rect.x += direction_normalized[0] * speed
-            image_rect.y += direction_normalized[1] * speed
-
-            
-            self.screen.blit(self.background_image, (0, 0))
-            
-            
-            self.screen.blit(self.logo, image_rect) 
-            
-            
-            self.updateScreen()
-            
-            
-            time.sleep(0.03)
-            
-            
-            if image_rect.x <= self.logo_destino:
-                cotejo = False
-        return
+            if direccion == 0:
+                self.image_rect.x += (self.direction_normalized[0] * 
+                                      self.speed)                           # Movemos la imagen en x
+                self.image_rect.y += (self.direction_normalized[1] * 
+                                      self.speed)                           # Movemos la imagen en y
+            else:
+                self.image_rect.x -= (self.direction_normalized[0] * 
+                                      self.speed)                           # Movemos la imagen en x
+                self.image_rect.y -= (self.direction_normalized[1] * 
+                                      self.speed)                           # Movemos la imagen en y
+            self.screen.blit(self.background_image, (0, 0))                 # Ponemos la imagen de fondo
+            self.screen.blit(self.logo, self.image_rect)                    # Ponemos la imagen del logo
+            self.updateScreen()                                             # Actualizamos la pantalla
+            time.sleep(0.03)                                                # Esperamos 0.03 segundos
+            if ((direccion == 0 and 
+                self.image_rect.x <= self.logo_destino) or
+                (direccion == 1 and
+                 self.image_rect.x >= self.end_point[0])):                  # Si la imagen llega al destino
+                cotejo = False                                              # Cotejo es False
+            if direccion == 0:                                              # Si la dirección es 0
+                self.speed -= 5                                             # La velocidad disminuye en 5
+            else:                                                           # Si no
+                self.speed += 5                                             # La velocidad aumenta en 5
+            if self.speed <= 1:                                             # Si la velocidad es menor o igual a 1
+                self.speed = 5                                              # La velocidad es 5
+        return                                                              # Salimos de la función
     
-    def fadeIn(self):
-        rectangulo = pygame.Rect(0,0, self.width,self.height)
-        for i in range (255):
-            pygame.draw.rect(self.screen, (0,0,0), rectangulo)    
-            self.logoBig.set_alpha(i)            
-            self.screen.blit(self.logoBig,((self.width/2)-int((self.width*335))/3440,(self.height/2)-int((self.height*305)/1440)))
-            self.updateScreen()
-            time.sleep(0.003)
-        time.sleep(2)
+    def fadeIn(self):                                                       # Anima la entrada del logo
+        rectangulo = pygame.Rect(0,0, self.width,self.height)               # Rectángulo
+        for i in range (0,255,4):                                           # Para i en el rango de 0 a 255 de 4 en 4
+            
+            pygame.draw.rect(self.screen, (0,0,0), rectangulo)              # Dibujamos   
+            self.logoBig.set_alpha(i)                                       # Aumentamos la transparencia del logo
+            self.screen.blit(self.logoBig,((self.width/2)-
+                                           int((self.width*335))/3440,
+                            (self.height/2)-int((self.height*305)/1440)))   # Ponemos el logo
+            self.updateScreen()                                             # Actualizamos la pantalla
+            time.sleep(0.003)                                               # Esperamos 0.003 segundos
+            
+        for i in range (255,-1,-8):                                         # Para i en el rango de 255 a 0 de 8 en 8
+            
+            self.screen.blit(self.background_image, (0, 0))                 # Ponemos la imagen de fondo
+            temp_surface = pygame.Surface((self.width, self.height),
+                                          pygame.SRCALPHA)                  # Creamos una superficie transparente
+            temp_surface.set_alpha(i)                                       # Aumentamos la transparencia de la superficie
+            pygame.draw.rect(temp_surface, (0,0,0), rectangulo)             # Dibujamos un rectángulo en la superficie transparente
+            self.screen.blit(temp_surface, (0,0))                           # Ponemos la superficie en la pantalla
+            self.screen.blit(self.logoBig,((self.width/2)-
+                                           int((self.width*335))/3440,
+                            (self.height/2)-int((self.height*305)/1440)))   # Ponemos el logo
+            self.updateScreen()                                             # Actualizamos la pantalla
+            time.sleep(0.003)                                               # Esperamos 0.003 segundos
+        for i in range (255,-1,-4):                                         # Para i en el rango de 255 a 0 de 4 en 4
+            self.screen.blit(self.background_image, (0, 0))                 # Ponemos la imagen de fondo
+            self.logoBig.set_alpha(i)                                       # Aumentamos la transparencia del logo
+            self.screen.blit(self.logoBig,((self.width/2)-
+                                           int((self.width*335))/3440,
+                            (self.height/2)-int((self.height*305)/1440)))   # Ponemos el logo
+            self.updateScreen()                                             # Actualizamos la pantalla
+            time.sleep(0.003)                                               # Esperamos 0.003 segundos
+                
+    def fadeOut(self):                                                      # Anima la salida del logo
+        rectangulo = pygame.Rect(0, 0, self.width, self.height)             # Rectángulo
+
+        for i in range(0, 256, 4):                                          # Para i en el rango de 0 a 256 de 4 en 4
+            self.screen.blit(self.background_image, (0, 0))                 # Dibujar fondo
+            self.logoBig.set_alpha(i)                                       # Aumentar transparencia del logo
+            self.screen.blit(self.logoBig, ((self.width / 2) - 
+                                            int((self.width * 335)) / 3440, 
+                                            (self.height / 2) - 
+                                            int((self.height * 305) /
+                                                1440)))                     # Dibujar logo
+            self.updateScreen()                                             # Actualizar pantalla
+            time.sleep(0.003)                                               # Esperar 0.003 segundos
+
+        for i in range(0, 256, 8):                                          # Para i en el rango de 0 a 256 de 4 en 4
+            
+            self.screen.blit(self.background_image, (0, 0))                 # Dibujar fondo
+            temp_surface = pygame.Surface((self.width, self.height), 
+                                          pygame.SRCALPHA)                  # Crear superficie transparente
+            temp_surface.set_alpha(i)                                       # Aumentar transparencia del rectángulo
+            pygame.draw.rect(temp_surface, (0, 0, 0), rectangulo)           # Dibujar rectángulo en la superficie transparente
+            self.screen.blit(temp_surface, (0, 0))                          # Dibujar la superficie en la pantalla
+            self.logoBig.set_alpha(255)                                     # Aumentar transparencia del logo
+            self.screen.blit(self.logoBig, ((self.width / 2) - 
+                                            int((self.width * 335)) / 3440, 
+                                            (self.height / 2) - 
+                                            int((self.height * 305) / 
+                                                1440)))                     # Dibujar logo
+            self.updateScreen()                                             # Actualizar pantalla
+            time.sleep(0.003)                                               # Esperar 0.003 segundos
+
+        for i in range(255, -1, -4):                                        # Para i en el rango de 255 a 0 de 4 en 4
+            pygame.draw.rect(self.screen, (0,0,0), rectangulo)              # Dibujar rectángulo   
+            self.logoBig.set_alpha(i)                                       # Aumentar transparencia del logo
+            self.screen.blit(self.logoBig, ((self.width / 2) - 
+                                            int((self.width * 335)) / 3440, 
+                                            (self.height / 2) - 
+                                            int((self.height * 305) / 
+                                                1440)))                     # Dibujar logo
+            self.updateScreen()                                             # Actualizar pantalla
+            time.sleep(0.003)                                               # Esperar 0.003 segundos
         
-    def fadeOut(self):
-        rectangulo = pygame.Rect(0,0, self.width,self.height)
-        pygame.draw.rect(self.screen, (0,0,0), rectangulo)    
-        self.logoBig.set_alpha(255)
-        self.screen.blit(self.logoBig,((self.width/2)-int((self.width*335))/3440,(self.height/2)-int((self.height*305)/1440)))
-        self.updateScreen()
-        time.sleep(1)                        
-        for i in range (255, 0, -1):
-            pygame.draw.rect(self.screen, (0,0,0), rectangulo)    
-            self.logoBig.set_alpha(i)
-            self.screen.blit(self.logoBig,((self.width/2)-int((self.width*335))/3440,(self.height/2)-int((self.height*305)/1440)))
-            self.updateScreen()
-            time.sleep(0.003)
-        time.sleep(0.5)
-        
-    def pushAndCome(self):
-        envio = ""
-        cotejo = True
-        while cotejo:
-            keys = pygame.key.get_pressed()
-            for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN:
-                    tecla_pulsada = event.key
-                    try:
-                        envio += chr(tecla_pulsada)
-                        aleatorio = random.randint(0,5)
-                        self.typewriter[aleatorio].play()
-                        if envio == "0":
-                            cotejo = False
-                        else:
-                            for i in range(200):
-                                time.sleep(0.0001)
-                                keys = pygame.key.get_pressed()
-                                for event in pygame.event.get():
-                                    if event.type == pygame.KEYDOWN:
-                                        tecla_pulsada = event.key
-                                        try:
-                                            envio += chr(tecla_pulsada)
-                                            aleatorio = random.randint(0,5)
-                                            self.typewriter[aleatorio].play()                                        
-                                            break
-                                        except:
-                                            pass
+    def pushAndCome(self, pos = [300,275], suma = 0,options = 10,interlin = 71,anchozona = 420):                                 # Recoge la información de teclas pulsadas (máximo 2)
+        pos = [(self.width * pos[0]) / 3440, (self.height * pos[1]) / 1440] # Posición
+        sumando = int(self.height)*interlin/1440                                     # Sumando
+        envio = ""                                                          # Variable de envío
+        cotejo = True                                                       # Bucle de cotejo
+        while cotejo:                                                       # Mientras cotejo sea True
+            keys = pygame.key.get_pressed()                                 # Teclas pulsadas
+            if keys[pygame.K_UP]:                                           # Si pulsamos la tecla de flecha arriba
+                envio = "98"                                                # Enviamos 98
+                cotejo = False                                              # Salimos del bucle
+            elif keys[pygame.K_DOWN]:                                       # Si pulsamos la tecla de flecha abajo
+                envio = "99"                                                # Enviamos 99
+                cotejo = False                                              # Salimos del bucle
+            for event in pygame.event.get():                                # Para cada evento en los eventos
+                if event.type == pygame.KEYDOWN:                            # Si el evento es de pulsación de tecla
+                    tecla_pulsada = event.key                               # Tecla pulsada
+                    try:                                                    # Intentamos
+                        if 1073741913 <= int(tecla_pulsada) <= 1073741921:  # Si la tecla pulsada es un número
+                            envio += chr(int(tecla_pulsada)-1073741864)     # Añadir la tecla pulsada a envío
+                        elif int(tecla_pulsada) == 1073741922:              # Si la tecla pulsada es un número
+                            envio = "0"                                     # Enviamos 0
+                        else:                                               # Si no
+                            envio += chr(tecla_pulsada)                     # Añadir la tecla pulsada a envío
+                        aleatorio = random.randint(0,5)                     # Aleatorio
+                        self.typewriter[aleatorio].play()                   # Sonido de máquina de escribir
+                        if envio == "0":                                    # Si envío es 0
+                            cotejo = False                                  # Salimos del bucle
+                        else:                                               # Si no
+                            for i in range(200):                            # Para i en el rango de 200
+                                time.sleep(0.0001)                          # Esperamos 0.0001 segundos
+                                keys = pygame.key.get_pressed()             # Teclas pulsadas
+                                for event in pygame.event.get():            # Para cada evento en los eventos
+                                    if event.type == pygame.KEYDOWN:        # Si el evento es de pulsación de tecla
+                                        tecla_pulsada = event.key           # Tecla pulsada
+                                        try:                                # Intentamos
+                                            if (1073741913 <= 
+                                                int(tecla_pulsada) <= 
+                                                1073741921):                # Si la tecla pulsada es un número
+                                                envio += chr(int(tecla_pulsada)-1073741864) # Añadir la tecla pulsada a envío
+                                            elif int(tecla_pulsada) == 1073741922: # Si la tecla pulsada es un número
+                                                envio = "0"                 # Enviamos 0
+                                            else:                           # Si no
+                                                envio += chr(tecla_pulsada) # Añadir la tecla pulsada a envío
+                                            aleatorio = random.randint(0,5) # Aleatorio
+                                            self.typewriter[aleatorio].play() # Sonido de máquina de escribir                                        
+                                            break                           # Salimos del bucle
+                                        except:                             # Si hay un error
+                                            pass                            # Pasamos
+                        cotejo = False                                      # Salimos del bucle
+                    except:                                                 # Si hay un error
+                        pass                                                # Pasamos
+                if event.type == pygame.MOUSEBUTTONDOWN:                        # Si pulsamos el ratón
+                    if event.button == 1 and options == 0:                      # Si pulsamos el botón izquierdo y no hay opciones
+                        envio = "0"
                         cotejo = False
-                    except:
-                        pass
-        return envio
+                        break
+                    
+                    if event.button == 1:                                       # Si pulsamos el botón izquierdo
+                        loc = pygame.mouse.get_pos()                                # Posición del ratón
+                        for i in range(options):
+                            if pos[0] <= loc[0] <= pos[0]+int((self.width*anchozona)/3440) and pos[1]+(sumando*i) <= loc[1] <= pos[1]+(sumando*i)+int(self.width*15/1440):
+                                envio = str (i+suma)
+                                cotejo = False
+                                break
+                    elif event.button == 4:
+                        envio = "98"
+                        cotejo = False
+                        break
+                    elif event.button == 5:
+                        envio = "99"
+                        cotejo = False
+                        break
+        return envio                                                        # Devolvemos envío
     
     def AnswerChain(self,posicion, error = 0):
                 
@@ -589,6 +687,8 @@ class Game:
         shift_pressed = False
         caps_pressed = False
 
+        anula = False                                                                       # Variable que controla si se anula la acción
+        
         while cotejo:
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
@@ -597,18 +697,23 @@ class Game:
                         shift_pressed = True
                     elif event.key == pygame.K_CAPSLOCK:
                         caps_pressed = not caps_pressed
-                    elif event.key == pygame.K_RETURN:
-                        if len(chain) > 0:
-                            if chain[-1] == ">":
-                                chain = chain[:-1]
-                            elif chain == ">":
-                                chain = ""
-                        termina, chain = errores.Errores(chain, error)
-                        if termina:
-                            self.typewriter_carro.play()
-                            cotejo = False
-                        else:
-                            self.wrong.play()
+
+                    elif event.key == pygame.K_ESCAPE:                                      # Si pulsamos return
+                        anula = True                                                        # Anulamos la acción
+                        cotejo = False                                                      # Salimos del bucle
+                        
+                    elif event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:                                      # Si pulsamos return
+                        if len(chain) > 0:                                                  # Si la cadena tiene algo
+                            if chain[-1] == ">":                                            # Si el último caracter es un ">"
+                                chain = chain[:-1]                                          # Quitamos el último caracter
+                            elif chain == ">":                                              # Si la cadena es solo un ">"
+                                chain = ""                                                  # La cadena se queda vacía
+                        termina, chain = errores.Errores(chain, error)                      # Llamamos a la función errores.Errores
+                        if termina:                                                         # Si termina es True
+                            self.typewriter_carro.play()                                    # Sonido de carro de máquina de escribir
+                            cotejo = False                                                  # Salimos del bucle
+                        else:                                                               # Si no
+                            self.wrong.play()                                               # Sonido de error
                     elif event.key == pygame.K_BACKSPACE:
                         if len(chain) > 0:
                             self.typewriter_borrar.play()
@@ -668,7 +773,7 @@ class Game:
                 
             
             # self.screen.fill((247, 241, 238), (posicion[0], posicion[1] - int((self.height * 19) / 1440), posicion[2], posicion[3]))
-            texto_escribe = self.font_2.render(chain, True, (0, 0, 200))
+            texto_escribe = self.font_2.render(chain, True, (0, 0, 200))                        
             text_rect = texto_escribe.get_rect(left=posicion[0], centery=posicion[1])
             self.screen.blit(texto_escribe, text_rect)
             ancho_texto = texto_escribe.get_width()
@@ -677,6 +782,9 @@ class Game:
         if len(chain) > 1 and chain[-1] == ">" or chain == ">":
             chain = chain[:-1]
 
+        if anula == True:                                               # Si anula es True
+            chain = "acción anulada"                                    # La cadena es "acción anulada" para avisar de aborto y no hacer nada     
+            
         return chain
     
     def SoundKillData(self):

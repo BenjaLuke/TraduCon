@@ -7,6 +7,20 @@ Utilizo POO para toda la parte gráfica, pero funciones para el resto. Separo ca
 
 Liándome la manta a la cabeza, decido hacer una aplicación con una librería para videojuegos (pygame). La experiencia es satisfactoria y muy enriquecedora.
 
+versión 2.21
+
+- Implementada rueda del ratón para rotativos
+- Implementada la opción de ratón para seleccionar como alternativa a los números
+- Mejorada la presentación de logo y marca tanto al entrar como al salir
+- Código mejor comentado
+
+versión 2.20
+
+- Se recoloca todo para que sea más fácil de leer
+- Se arreglan diferentes fallos de colocación de información mal alineada
+- Se crea la posibilidad de salir de todos los apartados que no son un menú con la tecla ESC
+- Arreglado Bugg: El nombre de la tabla no puede tener espacios. Ya no se sale el programa, ahora cambia los espacios por _
+- Arreglado Bugg: Un proyecto sin excepciones creadas, daba error al querer introducir datos. Ya no
 
 versión 2.19
 
