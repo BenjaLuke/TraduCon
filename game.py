@@ -661,7 +661,10 @@ class Game:                                                                 # Cl
                         loc = pygame.mouse.get_pos()                                # Posición del ratón
                         for i in range(options):
                             if pos[0] <= loc[0] <= pos[0]+int((self.width*anchozona)/3440) and pos[1]+(sumando*i) <= loc[1] <= pos[1]+(sumando*i)+int(self.width*15/1440):
-                                envio = str (i+suma)
+                                if str(i) == "0":
+                                    envio = "0"
+                                else:
+                                    envio = str (i+suma)
                                 cotejo = False
                                 break
                     elif event.button == 4:

@@ -530,7 +530,7 @@ def menuProyectoAnadeProceso(proyecto,proyectoSinExt):
         
         listaDatosTablaProceso(proyecto,proyectoSinExt,[550,700,900,650],7,True)             
         
-        mensajeConPausa("¿proceso? (S/N)",False,False)
+        mensajeConPausa("¿Otro proceso? (S/N)",False,False)
         stay = True
         while stay:
             respuesta = screen.pushAndCome(options = 0)
@@ -1368,7 +1368,7 @@ def listaClientes(listado):
         screen.text(150,300,todos_clientes,False)
         screen.updateScreen()
         time.sleep(0.1)
-        pulsacion = screen.pushAndCome(suma=posicion,options = 7)
+        pulsacion = screen.pushAndCome(suma=posicion,options = 8)
         if pulsacion == "98":
             if posicion > 0:                                                # Si la tecla es "98" y la posición es mayor que 0
                 posicion -= 1                                               # Disminuye la posición
@@ -1650,7 +1650,7 @@ def cuestionarioTabla():
     return de,a,euros
    
 def consultaTabla():         
-                                       
+    
     in_function = True
     while in_function:
         
@@ -1717,7 +1717,7 @@ def listaLaTabla(filas,tabla,posiciones,lineas = 10):                           
         
         mensajeConPausa("Selecciona una fila\nCursores mueve lista",
                         False,False)                                        # Muestra un mensaje
-        move = screen.pushAndCome(suma=primero,options = len(filas))                                         # Espera una tecla
+        move = screen.pushAndCome(suma=primero,pos = [858,180],interlin= 49,options = len(filas),anchozona=1200)                                         # Espera una tecla
         if move == "98":                                                    # Si la tecla es "98"
             if primero > 0:                                                 # Si la primera fila es mayor que 0
                 primero -= 1                                                # Disminuye la primera fila
@@ -1763,7 +1763,7 @@ def listaTablas(listado):                                                   # Mu
         screen.text(150,300,todas_tablas,False)
         screen.updateScreen()     
         time.sleep(0.1)
-        pulsacion = screen.pushAndCome(suma=posicion,options = 7)                                    # Espera una tecla
+        pulsacion = screen.pushAndCome(suma=posicion,options = 8)                                    # Espera una tecla
         if pulsacion == "98":
             if posicion > 0:                                                # Si la tecla es "98" y la posición es mayor que 0
                 posicion -= 1                                               # Disminuye la posición
