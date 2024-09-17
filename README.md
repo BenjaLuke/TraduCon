@@ -7,6 +7,17 @@ Utilizo POO para toda la parte gráfica, pero funciones para el resto. Separo ca
 
 Liándome la manta a la cabeza, decido hacer una aplicación con una librería para videojuegos (pygame). La experiencia es satisfactoria y muy enriquecedora.
 
+versión 2.22
+
+- corregido bugg al modificar clientes
+- Auto numeración correlativa de ID en Procesos y Excepciones al crear uno
+- Arreglado bugg al introducir fecha sin el año
+- Añade información sobre uso de ratón en el mismo escritorio
+- Arreglada la doble selección de la función PushAndCome
+- Implementado segundo botón de confirmar en el ratón
+- Implementado botón de Salir en el ratón
+- Código mejor comentado
+
 versión 2.21
 
 - Implementada rueda del ratón para rotativos

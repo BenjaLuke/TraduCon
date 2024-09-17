@@ -326,7 +326,8 @@ def menuProyectoCorrigeProceso(proyecto,proyectoSinExt):
                 
                 datos_a_recuperar[i] = fila[i+1]
         try:
-            
+
+            print(datos_a_recuperar,id_seleccionado)
             sentencia = "UPDATE Proceso SET Fecha = ?, Paginas = ?, Tipo = ? WHERE ID = ?"    
             parametros = (datos_a_recuperar[0],datos_a_recuperar[1],datos_a_recuperar[2],id_seleccionado)                      
             sql.Modificar(cursor,sentencia,parametros)                      
@@ -458,88 +459,97 @@ def menuProyectoAnade(proyecto,proyectoSinExt):
         
     return
 
-def menuProyectoAnadeProceso(proyecto,proyectoSinExt):          
+def menuProyectoAnadeProceso(proyecto,proyectoSinExt):                          # Menú para añadir procesos          
     
-    listaDatosTablaProceso(proyecto,proyectoSinExt,[550,700,900,650],7,True)             
-    mensajeConPausa("ESC para anular",False,False)
+    listaDatosTablaProceso(proyecto,proyectoSinExt,[550,700,900,650],7,True)    # Lista los procesos           
+    mensajeConPausa("ESC para anular",False,False)                              # Muestra mensaje
     
-    conexion,cursor = sql.creaAbreBd("Database/{}".format(proyecto))                                                                   
-    insercionDatos = f'''CREATE TABLE IF NOT EXISTS Proceso(ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                        Fecha TEXT, paginas INTEGER, Tipo TEXT)'''                                          
-    cursor = sql.CreaUnaTabla(cursor,insercionDatos) 
+    conexion,cursor = sql.creaAbreBd("Database/{}".format(proyecto))            # Abre la base de datos                                                                 
+    insercionDatos = f'''CREATE TABLE IF NOT EXISTS Proceso(
+                        ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                        Fecha TEXT, paginas INTEGER, Tipo TEXT)'''              # Crea la tabla si no existe                                        
+    cursor = sql.CreaUnaTabla(cursor,insercionDatos)                            # Crea la tabla si no existe
         
-    hoy = datetime.now()                                            
-    hoy = hoy.strftime("%d/%m/%Y")                                  
-    datos_a_pintar = [f"Añade proceso a {proyectoSinExt}","",f"Fecha: {hoy}","Páginas:","Tipo (T)rad./correc (R)evisión):"]
+    hoy = datetime.now()                                                        # Fecha de hoy                                
+    hoy = hoy.strftime("%d/%m/%Y")                                              # Formatea la fecha                              
+    datos_a_pintar = [f"Añade proceso a {proyectoSinExt}","",f"Fecha: {hoy}",
+                      "Páginas:","Tipo (T)rad./correc (R)evisión):"]            # Datos a pintar
     
-    in_function = True
-    while in_function:
+    in_function = True                                                          # Inicializa la variable de control
+    while in_function:                                                          # Bucle para añadir procesos
         
-        in_answer = True
-        while in_answer:
+        in_answer = True                                                        # Inicializa la variable de control
+        while in_answer:                                                        # Bucle para recoger los datos
             
-            screen.paper(50,700,6,2)
-            posicion = 150
-            for i in datos_a_pintar:
+            screen.paper(50,700,6,2)                                            # Pinta el papel
+            posicion = 150                                                      # Posición de inicio
+            for i in datos_a_pintar:                                            # Pinta los datos a introducir
                 
-                screen.textAlone(900,posicion,i)
-                posicion += 49 
+                screen.textAlone(900,posicion,i)                                # Pinta el dato
+                posicion += 49                                                  # Incrementa la posición
                 
-            screen.updateScreen()
-            fecha,paginas,tipo = cuestionarioProcesos([1,4,12])
-            if "acción anulada" in fecha:
-                return
-            mensajeConPausa("¿Datos correctos? (S/N)",False,False)
-            stay = True
-            while stay: 
-                respuesta = screen.pushAndCome(options = 0)
-                if respuesta.upper() == "S":
-                    carpeta = "Database/{}".format(proyecto)
-                    tabla = sql.SeleccionaTodasFilas(carpeta,"Excepciones")
-                    for i in tabla:
-                        if i[1] == fecha:
-                            conexion,cursor = sql.creaAbreBd(carpeta)
-                            sentencia = "DELETE FROM Excepciones WHERE Fecha = ?"
-                            parametros = (fecha,)
-                            sql.Modificar(cursor,sentencia,parametros)
-                            sql.CierraBd(conexion)
-                            break
-                    tabla = sql.SeleccionaTodasFilas(carpeta,"Proceso")
-                    debemos_grabar = True
-                    for i in tabla:
-                        if i[1] == fecha and i[3] == tipo:
-                            conexion,cursor = sql.creaAbreBd(carpeta)
-                            sentencia = "UPDATE Proceso SET Paginas = ? WHERE Fecha = ? AND Tipo = ?"
-                            parametros = (str(int(paginas)+int(i[2])),fecha,tipo)
-                            sql.Modificar(cursor,sentencia,parametros)
-                            sql.CierraBd(conexion)
-                            debemos_grabar = False
-                            break               
-                    in_answer = False
-                    mensajeConPausa("Datos añadidos")
-                    stay = False
-                elif respuesta.upper() == "N":
-                    mensajeConPausa("Repitamos")
-                    stay = False
-        if debemos_grabar == True:
-            conexion,cursor = sql.creaAbreBd("Database/{}".format(proyecto))                   
-            introducimos = 'INSERT INTO Proceso (Fecha,Paginas,Tipo) VALUES (:Fecha,:Paginas,:Tipo)'
-            parametros = {'Fecha':fecha,'Paginas':paginas,'Tipo':tipo}
-            sql.anadeFila(cursor,introducimos,parametros,conexion)
-            sql.CierraBd(conexion)                                      
+            screen.updateScreen()                                               # Actualiza la pantalla
+            fecha,paginas,tipo = cuestionarioProcesos([1,4,12])                 # Recoge los datos
+            if "acción anulada" in fecha:                                       # Si se anula la acción
+                return                                                          # Sale de la función
+            mensajeConPausa("¿Datos correctos? (S/N)",False,False)              # Muestra mensaje
+            stay = True                                                         # Inicializa la variable de control
+            while stay:                                                         # Bucle para comprobar los datos
+                respuesta = screen.pushAndCome(options = 0)                     # Recoge la respuesta
+                if respuesta.upper() == "S":                                    # Si la respuesta es S
+                    carpeta = "Database/{}".format(proyecto)                    # Carpeta del proyecto
+                    tabla = sql.SeleccionaTodasFilas(carpeta,"Excepciones")     # Tabla de excepciones
+                    for i in tabla:                                             # Bucle para comprobar si ya existe la excepción
+                        if i[1] == fecha:                                       # Si la excepción ya existe
+                            conexion,cursor = sql.creaAbreBd(carpeta)           # Abre la base de datos
+                            sentencia="DELETE FROM Excepciones WHERE Fecha = ?" # Sentencia de borrado
+                            parametros = (fecha,)                               # Parámetros de borrado
+                            sql.Modificar(cursor,sentencia,parametros)          # Borra la excepción
+                            sql.CierraBd(conexion)                              # Cierra la base de datos
+                            break                                               # Sale del bucle
+                    tabla = sql.SeleccionaTodasFilas(carpeta,"Proceso")         # Tabla de procesos
+                    debemos_grabar = True                                       # Inicializa la variable de control
+                    for i in tabla:                                             # Bucle para comprobar si ya existe el proceso
+                        if i[1] == fecha and i[3] == tipo:                      # Si el proceso ya existe
+                            conexion,cursor = sql.creaAbreBd(carpeta)           # Abre la base de datos
+                            sentencia = "UPDATE Proceso SET Paginas = ? WHERE Fecha = ? AND Tipo = ?" # Sentencia de modificación
+                            parametros = (str(int(paginas)+int(i[2])),
+                                          fecha,tipo)                           # Parámetros de modificación
+                            sql.Modificar(cursor,sentencia,parametros)          # Modifica el proceso
+                            sql.CierraBd(conexion)                              # Cierra la base de datos
+                            debemos_grabar = False                              # Activa la variable de control
+                            break                                               # Sale del bucle
+                    in_answer = False                                           # Sale del bucle
+                    mensajeConPausa("Datos añadidos")                           # Muestra mensaje
+                    stay = False                                                # Sale del bucle
+                elif respuesta.upper() == "N":                                  # Si la respuesta es N
+                    mensajeConPausa("Repitamos")                                # Muestra mensaje
+                    stay = False                                                # Sale del bucle
+        if debemos_grabar == True:                                              # Si debemos grabar el proceso
+            conexion,cursor = sql.creaAbreBd("Database/{}".format(proyecto))    # Abre la base de datos                   
+            introducimos = 'INSERT INTO Proceso (Fecha,Paginas,Tipo) VALUES (:Fecha,:Paginas,:Tipo)' # Sentencia de inserción
+            parametros = {'Fecha':fecha,'Paginas':paginas,'Tipo':tipo}          # Parámetros de inserción
+            sql.anadeFila(cursor,introducimos,parametros,conexion)              # Añade la fila
+            sql.CierraBd(conexion)                                              # Cierra la base de datos         
         
-        listaDatosTablaProceso(proyecto,proyectoSinExt,[550,700,900,650],7,True)             
+        carpeta = f"Database/{proyecto}"                                        # Carpeta del proyecto
+        conexion,cursor = sql.creaAbreBd("Database/{}".format(proyecto))        # Abre la base de datos
+        tabla = "Proceso"                                                       # Tabla de procesos
+        sql.RenumeraId(cursor,tabla)                                            # Renumeramos los id
         
-        mensajeConPausa("¿Otro proceso? (S/N)",False,False)
-        stay = True
-        while stay:
-            respuesta = screen.pushAndCome(options = 0)
-            if respuesta.upper() == "N":
-                in_function = False
-                stay = False  
-            elif respuesta.upper() == "S":
-                stay = False         
-    return                                          
+        listaDatosTablaProceso(proyecto,proyectoSinExt,[550,700,900,650],
+                               7,True)                                          # Lista los procesos
+        
+        mensajeConPausa("¿Otro proceso? (S/N)",False,False)                     # Muestra mensaje
+        stay = True                                                             # Inicializa la variable de control
+        while stay:                                                             # Bucle para comprobar si se añade otro proceso
+            respuesta = screen.pushAndCome(options = 0)                         # Recoge la respuesta
+            if respuesta.upper() == "N":                                        # Si la respuesta es N
+                in_function = False                                             # Sale del bucle
+                stay = False                                                    # Sale del bucle
+            elif respuesta.upper() == "S":                                      # Si la respuesta es S
+                stay = False                                                    # Sale del bucle
+    return                                                                      # Sale de la función                        
 
 def cuestionarioProcesos(errores):                                              # Activa el cuestionario para los procesos
     fecha,paginas,tipo = "","",""                                               # Inicializa las variables
@@ -555,75 +565,81 @@ def cuestionarioProcesos(errores):                                              
     fecha,paginas,tipo = variablesPasar                                         # Asigna los datos a las variables
     return fecha,paginas,tipo                                                   # Devuelve los datos
 
-def menuProyectoAnadeExcepcion(proyecto,proyectoSinExt):
+def menuProyectoAnadeExcepcion(proyecto,proyectoSinExt):                        # Menú para añadir excepciones
     
-    listaTablaExcepciones(proyecto,proyectoSinExt,[550,700,900,650],7,True)               
-    mensajeConPausa("ESC para anular",False,False)        
+    listaTablaExcepciones(proyecto,proyectoSinExt,[550,700,900,650],7,True)     # Lista las excepciones              
+    mensajeConPausa("ESC para anular",False,False)                              
     
     conexion,cursor = sql.creaAbreBd("Database/{}".format(proyecto))                                                                   
-    insercionDatos = f'''CREATE TABLE IF NOT EXISTS Excepciones(ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                        Fecha TEXT)'''                                          
-    cursor = sql.CreaUnaTabla(cursor,insercionDatos)
-    datos_a_pintar = [f"Añade excepción a {proyectoSinExt}","","Fecha:"]
+    insercionDatos = f'''CREATE TABLE IF NOT EXISTS Excepciones(
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                        Fecha TEXT)'''                                          # Crea la tabla si no existe                                     
+    cursor = sql.CreaUnaTabla(cursor,insercionDatos)                            # Crea la tabla si no existe
+    datos_a_pintar = [f"Añade excepción a {proyectoSinExt}","","Fecha:"]        # Datos a pintar
     
-    in_function = True
-    while in_function:
+    in_function = True                                                          # Inicializa la variable de control
+    while in_function:                                                          # Bucle para añadir excepciones
         
-        in_answer = True
-        while in_answer:
+        in_answer = True                                                        # Inicializa la variable de control
+        while in_answer:                                                        # Bucle para recoger los datos
             
-            screen.paper(50,700,6,2)
-            posicion = 150
-            for i in datos_a_pintar:
+            screen.paper(50,700,6,2)                                            # Pinta el papel
+            posicion = 150                                                      # Posición de inicio
+            for i in datos_a_pintar:                                            # Pinta los datos a introducir
                 
-                screen.textAlone(900,posicion,i)
-                posicion += 49 
+                screen.textAlone(900,posicion,i)                                # Pinta el dato
+                posicion += 49                                                  # Incrementa la posición
                 
-            screen.updateScreen()
-            fecha = cuestionarioExcepciones()
-            if "acción anulada" in fecha:
-                return
-            stay = True
-            while stay:
-                mensajeConPausa("¿Datos correctos? (S/N)",False,False)
-                respuesta = screen.pushAndCome(options = 0)
-                if respuesta.upper() == "S":
+            screen.updateScreen()                                               # Actualiza la pantalla
+            fecha = cuestionarioExcepciones()                                   # Recoge la fecha
+            if "acción anulada" in fecha:                                       # Si se anula la acción
+                return                                                          # Sale de la función
+            stay = True                                                         # Inicializa la variable de control
+            while stay:                                                         # Bucle para comprobar los datos
+                mensajeConPausa("¿Datos correctos? (S/N)",False,False)          # Muestra mensaje
+                respuesta = screen.pushAndCome(options = 0)                     # Recoge la respuesta
+                if respuesta.upper() == "S":                                    # Si la respuesta es S
                     
-                    carpeta = "Database/{}".format(proyecto)
-                    tabla = sql.SeleccionaTodasFilas(carpeta,"Excepciones")
-                    problemas = False
-                    for i in tabla:
-                        if i[1] == fecha:
-                            screen.SoundWrongAnswer()
-                            mensajeConPausa("Ya existe una excepción\ncon esa fecha")
-                            problemas = True
-                            break
-                    if problemas == False:
-                        in_answer = False
-                        stay = False
-                elif respuesta.upper() == "N":
-                    mensajeConPausa("Repitamos")
-                    stay = False
-        conexion,cursor = sql.creaAbreBd("Database/{}".format(proyecto))                   
-        introducimos = 'INSERT INTO Excepciones (Fecha) VALUES (:Fecha)'
-        parametros = {'Fecha':fecha}
-        sql.anadeFila(cursor,introducimos,parametros,conexion)
-        sql.CierraBd(conexion)                                      
+                    carpeta = "Database/{}".format(proyecto)                    # Carpeta del proyecto
+                    tabla = sql.SeleccionaTodasFilas(carpeta,"Excepciones")     # Tabla de excepciones
+                    problemas = False                                           # Inicializa la variable de control
+                    for i in tabla:                                             # Bucle para comprobar si ya existe la excepción
+                        if i[1] == fecha:                                       # Si la excepción ya existe
+                            screen.SoundWrongAnswer()                           # Sonido de error
+                            mensajeConPausa("Ya existe una excepción\ncon esa fecha") # Muestra mensaje
+                            problemas = True                                    # Activa la variable de control
+                            break                                               # Sale del bucle
+                    if problemas == False:                                      # Si no hay problemas
+                        in_answer = False                                       # Sale del bucle
+                        stay = False                                            # Sale del bucle
+                elif respuesta.upper() == "N":                                  # Si la respuesta es N
+                    mensajeConPausa("Repitamos")                                # Muestra mensaje
+                    stay = False                                                # Sale del bucle
+        conexion,cursor = sql.creaAbreBd("Database/{}".format(proyecto))        # Abre la base de datos                 
+        introducimos = 'INSERT INTO Excepciones (Fecha) VALUES (:Fecha)'        # Sentencia de inserción
+        parametros = {'Fecha':fecha}                                            # Parámetros de inserción
+        sql.anadeFila(cursor,introducimos,parametros,conexion)                  # Añade la fila
+        sql.CierraBd(conexion)                                                  # Cierra la base de datos
         
-        listaTablaExcepciones(proyecto,proyectoSinExt,[550,700,900,650],7,True)               
+        listaTablaExcepciones(proyecto,proyectoSinExt,[550,700,900,650],7,True) # Lista las excepciones               
                 
-        mensajeConPausa("¿Otra excepción? (S/N)",False,False)
-        stay = True
-        while stay:
-            respuesta = screen.pushAndCome(options = 0)
-            if respuesta.upper() == "N":
-                in_function = False  
-                stay = False
-                mensajeConPausa("Añadidas con éxito")
-            elif respuesta.upper() == "S":
-                mensajeConPausa("")
-                stay = False     
-    return                                             
+        mensajeConPausa("¿Otra excepción? (S/N)",False,False)                   # Muestra mensaje
+        stay = True                                                             # Inicializa la variable de control
+        while stay:                                                             # Bucle para comprobar si se añade otra excepción
+            respuesta = screen.pushAndCome(options = 0)                         # Recoge la respuesta
+            if respuesta.upper() == "N":                                        # Si la respuesta es N
+                in_function = False                                             # Sale del bucle
+                stay = False                                                    # Sale del bucle
+                mensajeConPausa("Añadidas con éxito")                           # Muestra mensaje
+            elif respuesta.upper() == "S":                                      # Si la respuesta es S
+                stay = False                                                    # Sale del bucle 
+
+        carpeta = f"Database/{proyecto}"                                        # Carpeta del proyecto
+        conexion,cursor = sql.creaAbreBd("Database/{}".format(proyecto))        # Abre la base de datos
+        tabla = "Excepciones"                                                   # Tabla de excepciones
+        sql.RenumeraId(cursor,tabla)                                            # Renumeramos los id
+        
+    return                                                                      # Sale de la función                                    
 
 def cuestionarioExcepciones():
     
@@ -1405,7 +1421,7 @@ def modificaCliente():
         
         cliente = lista_clientes[int(id_seleccionado)-1]
         fila = sql.MuestraDato(carpeta,cliente,"Clientes")
-        
+        id_cliente = fila[0][0]
         datos_a_pintar = [f"Modificando un cliente","",f"Nombre: {fila[0][1]}","",f"Teléfono: {fila[0][2]}",
                           f"Dirección: {fila[0][3]}",f"Ciudad: {fila[0][4]}", f"C.P.: {fila[0][5]}",
                           f"País: {fila[0][6]}",
@@ -1446,7 +1462,7 @@ def modificaCliente():
                         cliente[3], cliente[4], cliente[5],
                         cliente[6], cliente[7], cliente[8],
                         cliente[9],  
-                        id_seleccionado)
+                        id_cliente)
             conexion,cursor = sql.creaAbreBd(carpeta)
             sql.Modificar(cursor,sentencia,parametros)
             conexion.commit()

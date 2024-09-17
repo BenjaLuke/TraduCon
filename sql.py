@@ -59,4 +59,12 @@ def EliminaFilaenTabPro(cursor,tabla,fila):                                     
     sentencia = f"DELETE FROM {tabla} WHERE ID = ?"                             # Sentencia para eliminar la fila
     cursor.execute(sentencia,(fila,))                                           # Ejecuta la sentencia
     cursor.connection.commit()                                                  # Guarda los cambios
-     
+
+def RenumeraId(cursor,tabla):                                                   # Renumera el id
+    sentencia = f"SELECT ID FROM {tabla} ORDER BY ID"                           # Sentencia para obtener los id
+    cursor.execute(sentencia)                                                   # Ejecuta la sentencia
+    for i, fila in enumerate(cursor.fetchall(), 1):                             # Recorre las filas
+        sentencia = f"UPDATE {tabla} SET ID = ? WHERE ID = ?"                   # Sentencia para actualizar el id
+        cursor.execute(sentencia,(i,fila[0]))                                   # Ejecuta la sentencia
+    cursor.connection.commit()                                                  # Guarda los cambios
+       
